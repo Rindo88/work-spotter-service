@@ -1,23 +1,35 @@
 <?php
 
+namespace App\Livewire\Profile;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
 
 new class extends Component
 {
+    use WithFileUploads;
+
     public string $name = '';
     public string $email = '';
+    public string $phone = '';
+    public $profilePhoto;
+    public string $profilePhotoUrl = '';
 
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->phone = $user->phone ?? '';
+        $this->profilePhotoUrl = $user->profile_picture ? Storage::url($user->profile_picture) : '';
     }
 
     /**
@@ -30,9 +42,22 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:15'],
+            'profilePhoto' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $user->fill($validated);
+
+        // Handle profile photo upload
+        if ($this->profilePhoto) {
+            if ($user->profile_picture) {
+                Storage::delete($user->profile_picture);
+            }
+            
+            $path = $this->profilePhoto->store('profile-photos', 'public');
+            $user->profile_picture = $path;
+            $this->profilePhotoUrl = Storage::url($path);
+        }
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -40,7 +65,32 @@ new class extends Component
 
         $user->save();
 
-        $this->dispatch('profile-updated', name: $user->name);
+        // Dispatch event untuk update component lain
+        $this->dispatch('profile-updated');
+        
+        // Reset profile photo property
+        $this->profilePhoto = null;
+
+        Session::flash('status', 'profile-updated');
+    }
+
+    /**
+     * Delete the current profile photo.
+     */
+    public function deleteProfilePhoto(): void
+    {
+        $user = Auth::user();
+
+        if ($user->profile_picture) {
+            Storage::delete($user->profile_picture);
+            $user->profile_picture = null;
+            $user->save();
+            
+            $this->profilePhotoUrl = '';
+            
+            // Dispatch event untuk update component lain
+            $this->dispatch('profile-updated');
+        }
     }
 
     /**
@@ -52,7 +102,6 @@ new class extends Component
 
         if ($user->hasVerifiedEmail()) {
             $this->redirectIntended(default: route('dashboard', absolute: false));
-
             return;
         }
 
@@ -62,54 +111,97 @@ new class extends Component
     }
 }; ?>
 
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {{ __('Profile Information') }}
-        </h2>
+<div>
+    <div class="profile-card">
+        <header class="mb-4">
+            <h2 class="h5 fw-bold mb-2">Informasi Profil</h2>
+            <p class="text-muted mb-0">Perbarui informasi profil dan alamat email akun Anda.</p>
+        </header>
 
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
-
-    <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input wire:model="name" id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
-        </div>
-
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
-
-            @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button wire:click.prevent="sendVerification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
+        <!-- Profile Photo Section -->
+        <div class="text-center mb-4">
+            <div class="position-relative d-inline-block">
+                @if($profilePhotoUrl)
+                    <img src="{{ $profilePhotoUrl }}" class="profile-avatar-lg" alt="Profile Photo">
+                @else
+                    <div class="profile-avatar-lg d-flex align-items-center justify-content-center bg-primary text-white">
+                        {{ strtoupper(substr($name, 0, 1)) }}
+                    </div>
+                @endif
+                
+                <label for="profilePhotoInput" class="btn-edit-photo">
+                    <i class="bi bi-camera-fill"></i>
+                    <input type="file" id="profilePhotoInput" wire:model="profilePhoto" class="d-none" accept="image/*">
+                </label>
+                
+                @if($profilePhotoUrl)
+                    <button type="button" wire:click="deleteProfilePhoto" class="btn-delete-photo">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                @endif
+            </div>
+            
+            @error('profilePhoto') 
+                <div class="text-danger mt-2">{{ $message }}</div> 
+            @enderror
+            
+            @if($profilePhoto)
+                <div class="mt-2">
+                    <span class="text-muted">Preview: {{ $profilePhoto->getClientOriginalName() }}</span>
                 </div>
             @endif
         </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+        <form wire:submit="updateProfileInformation" class="mt-3">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nama</label>
+                <input wire:model="name" type="text" class="form-control" id="name" name="name" required autofocus autocomplete="name">
+                @error('name') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+            </div>
 
-            <x-action-message class="me-3" on="profile-updated">
-                {{ __('Saved.') }}
-            </x-action-message>
-        </div>
-    </form>
-</section>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input wire:model="email" type="email" class="form-control" id="email" name="email" required autocomplete="username">
+                @error('email') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+
+                @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
+                    <div class="mt-2">
+                        <p class="text-muted mb-1">
+                            Alamat email Anda belum terverifikasi.
+                        </p>
+
+                        <button wire:click.prevent="sendVerification" class="btn btn-link p-0 text-primary">
+                            Klik di sini untuk mengirim ulang email verifikasi.
+                        </button>
+                    </div>
+
+                    @if (session('status') === 'verification-link-sent')
+                        <p class="text-success mt-2">
+                            Link verifikasi baru telah dikirim ke alamat email Anda.
+                        </p>
+                    @endif
+                @endif
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Nomor Telepon</label>
+                <div class="input-group">
+                    <span class="input-group-text">+62</span>
+                    <input wire:model="phone" type="tel" class="form-control" id="phone" name="phone" placeholder="81234567890" autocomplete="tel">
+                </div>
+                @error('phone') <div class="text-danger mt-1">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <button type="submit" class="btn btn-primary">
+                    <span wire:loading wire:target="updateProfileInformation" class="spinner-border spinner-border-sm me-2"></span>
+                    Simpan Perubahan
+                </button>
+
+                @if (session('status') === 'profile-updated')
+                    <span class="text-success">Tersimpan.</span>
+                @endif
+            </div>
+        </form>
+    </div>
+</div>

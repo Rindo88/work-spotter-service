@@ -20,6 +20,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'profile_picture',
+        'role'
     ];
 
     /**
@@ -44,4 +47,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+        public function vendor()
+    {
+        return $this->hasOne(Vendor::class);
+    }
+
+      public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isVendor(): bool
+    {
+        return $this->role === 'vendor';
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
 }
+
