@@ -22,6 +22,9 @@ return new class extends Migration
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('profile_picture')->nullable();
             $table->float('rating_avg')->default(0);
+            $table->enum('type', ['formal', 'informal'])->default('informal');
+            $table->boolean('is_rfid')->default(false);
+            $table->string('operational_notes')->nullable();
             $table->timestamps();
         });
     }

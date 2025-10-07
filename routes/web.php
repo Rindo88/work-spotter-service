@@ -1,38 +1,36 @@
 <?php
 
-use App\Http\Controllers\VendorController;
+use App\Livewire\Vendor\VendorRegistration;
 use Illuminate\Support\Facades\Route;
-require __DIR__.'/auth.php';
 
-Route::view('/', 'welcome')->middleware(['role:admin'])->name('home');
-Route::view('/phone', 'tes-phone');
+require __DIR__ . '/auth.php';
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        return view('home.index');
+    })->name('home');
 
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+    Route::get('/profile', function () {
+        return view('livewire.profile.index');
+    })->name('profile');
+
+    Route::get('/checkin', function () {
+        return view('checkin.index');
+    })->name('checkin');
+});
 
 
-    // routes/web.php
+// Vendor Routes
+Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
+    Route::get('/orders', function () {
+        return view('vendor.orders');
+    })->name('orders');
+
+    Route::get('/products', function () {
+        return view('vendor.products');
+    })->name('products');
+});
+
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
-    Route::get('/become-vendor', [VendorController::class, 'showRegistrationForm'])->name('become.vendor');
-    Route::post('/become-vendor', [VendorController::class, 'register'])->name('vendor.register.submit');
-});
-
-Route::middleware(['auth', 'verified', 'role:vendor'])->group(function () {
-    Route::get('/become-vendor', [VendorController::class, 'showRegistrationForm'])->name('become.vendor');
-    Route::post('/become-vendor', [VendorController::class, 'register'])->name('vendor.register.submit');
-});
-
-
-// routes/web.php
-Route::middleware(['auth', 'verified', 'role:vendor'])->prefix('vendor')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
-    
-    // Services
-  
+    Route::get('/become-vendor', VendorRegistration::class)->name('vendor.register');
 });

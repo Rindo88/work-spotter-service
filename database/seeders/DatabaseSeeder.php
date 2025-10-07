@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CategoriesTableSeeder::class,
+            VendorScheduleSeeder::class,
             // Jika ada seeder lain, tambahkan di sini
         ]);
     }

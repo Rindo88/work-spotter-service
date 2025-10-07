@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Livewire\Profile\UserProfile;
+use App\Livewire\Profile\VendorProfileComponent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -48,25 +51,47 @@ class User extends Authenticatable
         ];
     }
 
-        public function vendor()
+    // Tambahkan method ini
+    public function vendorProfile()
     {
-        return $this->hasOne(Vendor::class);
+        return $this->hasOne(VendorProfileComponent::class);
     }
 
-      public function isAdmin(): bool
+    public function customerProfile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function hasVendorProfile()
+    {
+        return $this->vendorProfile()->exists();
+    }
+
+
+
+    public function vendor()
+    {
+        return $this->hasOne(\App\Models\Vendor::class);
+    }
+    
+    // Method sederhana untuk cek vendor
+    public function getHasVendorAttribute()
+    {
+        return $this->vendor !== null;
+    }
+
+    public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
     public function isVendor(): bool
     {
-        return $this->role === 'vendor';
+        return $this->role === 'vendor' && $this->hasVendorProfile();
     }
 
     public function isUser(): bool
     {
         return $this->role === 'user';
     }
-
 }
-

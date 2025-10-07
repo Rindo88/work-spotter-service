@@ -11,8 +11,23 @@ class Vendor extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'business_name', 'description', 'category_id',
-        'address', 'latitude', 'longitude', 'profile_picture', 'rating_avg'
+        'user_id',
+        'business_name',
+        'description',
+        'category_id',
+        'address',
+        'latitude',
+        'longitude',
+        'profile_picture',
+        'rating_avg',
+        'type',
+        'is_rfid',
+        'operational_notes',
+    ];
+
+    protected $casts = [
+        'is_rfid' => 'boolean',
+        'rating_avg' => 'float'
     ];
 
     public function user()
@@ -43,5 +58,40 @@ class Vendor extends Model
     public function chats()
     {
         return $this->hasMany(Chat::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(VendorSchedule::class);
+    }
+    public function isFormal()
+    {
+        return $this->type === 'formal';
+    }
+
+    public function isInformal()
+    {
+        return $this->type === 'informal';
+    }
+
+
+    public function getCurrentStatusAttribute()
+    {
+        $todaySchedule = $this->schedules()
+            ->where('day', strtolower(now()->format('l')))
+            ->first();
+
+        if (!$todaySchedule) {
+            return 'unknown';
+        }
+
+        return $todaySchedule->isOpenNow() ? 'open' : 'closed';
+    }
+
+    public function getTodayScheduleAttribute()
+    {
+        return $this->schedules()
+            ->where('day', strtolower(now()->format('l')))
+            ->first();
     }
 }

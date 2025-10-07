@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('rfid_tag_id')->nullable()->constrained('rfid_tags')->nullOnDelete();
             $table->timestamp('checkin_time')->useCurrent();
             $table->timestamp('checkout_time')->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->string('location_name')->nullable();
             $table->enum('status', ['checked_in', 'checked_out'])->default('checked_in');
             $table->timestamps();
         });
