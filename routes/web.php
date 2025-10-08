@@ -34,3 +34,20 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/become-vendor', VendorRegistration::class)->name('vendor.register');
 });
+
+
+// routes/api.php
+use App\Http\Controllers\Api\SpotDetectorController;
+
+Route::prefix('api')->group(function () {
+    Route::prefix('/vendor/iot')->group(function () {
+        Route::post('/checkin', [SpotDetectorController::class, 'checkin']);
+        Route::post('/checkout', [SpotDetectorController::class, 'checkout']);
+        Route::get('/device/{deviceId}/status', [SpotDetectorController::class, 'deviceStatus']);
+    });
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/chat', App\Livewire\Chat\ChatList::class)->name('chat.list');
+    Route::get('/chat/{userId}', App\Livewire\Chat\ChatRoom::class)->name('chat.room');
+});

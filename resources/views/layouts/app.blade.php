@@ -103,12 +103,12 @@
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <div class="d-flex justify-content-around py-2">
-            <a href="{{ route('home') }}"
+            <a href="{{ route('home') }}" x-navigate
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('home') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-house fs-5"></i>
                 <small>Home</small>
             </a>
-            <a href="{{ route('home') }}"
+            <a href="{{ route('home') }}" x-navigate
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('search') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-search fs-5"></i>
                 <small>Cari</small>
@@ -118,12 +118,12 @@
                 <i class="bi bi-geo-alt fs-5"></i>
                 <small>Peta</small>
             </a>
-            <a href="{{ route('home') }}"
+            <a href="{{ route('chat.list') }}" x-navigate
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('chat') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-chat-dots fs-5"></i>
                 <small>Chat</small>
             </a>
-            <a href="{{ route('profile') }}"
+            <a href="{{ route('profile') }}" x-navigate
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('profile') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-person fs-5"></i>
                 <small>Profil</small>

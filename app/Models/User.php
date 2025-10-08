@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use App\Livewire\Profile\UserProfile;
-use App\Livewire\Profile\VendorProfileComponent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,11 +10,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -28,21 +19,11 @@ class User extends Authenticatable
         'role'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -51,29 +32,42 @@ class User extends Authenticatable
         ];
     }
 
-    // Tambahkan method ini
-    public function vendorProfile()
-    {
-        return $this->hasOne(VendorProfileComponent::class);
-    }
-
-    public function customerProfile()
-    {
-        return $this->hasOne(UserProfile::class);
-    }
-
-    public function hasVendorProfile()
-    {
-        return $this->vendorProfile()->exists();
-    }
-
-
-
+    
+    // Relasi ke model Vendor (table vendors)
     public function vendor()
     {
-        return $this->hasOne(\App\Models\Vendor::class);
+        return $this->hasOne(Vendor::class);
     }
-    
+
+    // Cek apakah user punya vendor profile
+    public function hasVendorProfile()
+    {
+        return $this->vendor !== null;
+    }
+
+    // Cek apakah vendor sudah aktif (checkin)
+    public function isVendorActive()
+    {
+        if (!$this->isVendor()) return false;
+
+        return \App\Models\Checkin::where('user_id', $this->id)
+            ->where('status', 'checked_in')
+            ->whereDate('checkin_time', today())
+            ->exists();
+    }
+
+    // Get current active checkin
+    public function currentCheckin()
+    {
+        if (!$this->isVendor()) return null;
+
+        return \App\Models\Checkin::where('user_id', $this->id)
+            ->where('status', 'checked_in')
+            ->with('vendor')
+            ->first();
+    }
+
+
     // Method sederhana untuk cek vendor
     public function getHasVendorAttribute()
     {

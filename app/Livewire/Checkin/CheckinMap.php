@@ -6,92 +6,164 @@ namespace App\Livewire\Checkin;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Checkin;
-use App\Models\Vendor;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class CheckinMap extends Component
 {
     public $userLocation = null;
-    public $nearbyVendors = [];
-    public $selectedVendor = null;
+    public $nearbyActiveVendors = [];
     public $isCheckingIn = false;
     public $successMessage = '';
     public $currentCheckin = null;
     public $isLoading = false;
+    public $vendorProfile = null;
 
-    // Hapus listeners yang complex
+    // Manual location input
+    public $manualLatitude = '';
+    public $manualLongitude = '';
+    public $showManualInput = false;
+
     public function mount()
     {
-        Log::info('🔵 CheckinMap mounted - User: ' . Auth::id());
-        $this->currentCheckin = Checkin::where('user_id', Auth::id())
-            ->where('status', 'checked_in')
-            ->with('vendor')
-            ->first();
-    }
+        if (!Auth::user()->isVendor()) {
+            Log::warning('❌ User bukan vendor mencoba akses checkin', ['user_id' => Auth::id()]);
+            return;
+        }
 
-    // Method untuk handle location dari JavaScript
-    public function setUserLocation($latitude, $longitude)
-    {
-        Log::info('📍 Setting user location manually', [
-            'lat' => $latitude,
-            'lng' => $longitude
+        // Load userLocation dari session jika ada
+        if (Session::has('vendor_last_location')) {
+            $this->userLocation = Session::get('vendor_last_location');
+            $this->findNearbyActiveVendors(); // Auto load nearby vendors
+        }
+
+        Log::info('🔵 Vendor CheckinMap mounted', [
+            'user_id' => Auth::id(),
+            'vendor_id' => Auth::user()->vendor->id,
+            'has_location' => !is_null($this->userLocation)
         ]);
-        
-        $this->userLocation = [
-            'latitude' => $latitude,
-            'longitude' => $longitude
-        ];
-        
-        $this->isLoading = false;
-        $this->findNearbyVendors();
+
+        $this->vendorProfile = Auth::user()->vendor;
+        $this->currentCheckin = Auth::user()->currentCheckin();
     }
 
     public function getCurrentLocation()
     {
-        Log::info('📍 getCurrentLocation called');
+        Log::info('📍 Vendor mendapatkan lokasi', ['vendor_id' => $this->vendorProfile->id]);
         $this->isLoading = true;
-        
-        // Dispatch event ke JavaScript
+        $this->showManualInput = false;
+
         $this->dispatch('request-location');
     }
 
-    public function findNearbyVendors()
+    public function setUserLocation($latitude, $longitude)
     {
-        if (!$this->userLocation) {
-            Log::warning('❌ No user location for finding vendors');
-            return;
+        Log::info('📍 Vendor set lokasi', [
+            'vendor_id' => $this->vendorProfile->id,
+            'lat' => $latitude,
+            'lng' => $longitude
+        ]);
+
+        $this->userLocation = [
+            'latitude' => $latitude,
+            'longitude' => $longitude
+        ];
+
+        // SIMPAN KE SESSION
+        Session::put('vendor_last_location', $this->userLocation);
+
+        $this->isLoading = false;
+        $this->findNearbyActiveVendors();
+    }
+
+    // Method untuk set lokasi manual dari peta
+    public function setManualLocation($latitude, $longitude)
+    {
+        $this->userLocation = [
+            'latitude' => $latitude,
+            'longitude' => $longitude
+        ];
+
+        // SIMPAN KE SESSION
+        Session::put('vendor_last_location', $this->userLocation);
+
+        $this->manualLatitude = $latitude;
+        $this->manualLongitude = $longitude;
+        $this->showManualInput = true;
+
+        $this->findNearbyActiveVendors();
+
+        Log::info('📍 Lokasi manual dipilih', [
+            'lat' => $latitude,
+            'lng' => $longitude
+        ]);
+    }
+
+    // Method untuk set lokasi dari input manual
+    public function setLocationFromInput()
+    {
+        $this->validate([
+            'manualLatitude' => 'required|numeric|between:-90,90',
+            'manualLongitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        $this->userLocation = [
+            'latitude' => (float) $this->manualLatitude,
+            'longitude' => (float) $this->manualLongitude
+        ];
+
+        // SIMPAN KE SESSION
+        Session::put('vendor_last_location', $this->userLocation);
+
+        $this->showManualInput = false;
+        $this->findNearbyActiveVendors();
+
+        // Update map via JavaScript
+        $this->dispatch('update-map-location', location: $this->userLocation);
+
+        Log::info('📍 Lokasi dari input manual', $this->userLocation);
+    }
+
+    public function toggleManualInput()
+    {
+        $this->showManualInput = !$this->showManualInput;
+        if ($this->showManualInput && $this->userLocation) {
+            $this->manualLatitude = $this->userLocation['latitude'];
+            $this->manualLongitude = $this->userLocation['longitude'];
         }
+    }
+
+    public function findNearbyActiveVendors()
+    {
+        if (!$this->userLocation) return;
 
         $latitude = $this->userLocation['latitude'];
         $longitude = $this->userLocation['longitude'];
 
-        Log::info('🔍 Finding nearby vendors', ['lat' => $latitude, 'lng' => $longitude]);
-
         try {
-            $vendors = Vendor::whereNotNull('latitude')
-                ->whereNotNull('longitude')
+            $activeCheckins = Checkin::where('status', 'checked_in')
+                ->whereDate('checkin_time', today())
+                ->where('user_id', '!=', Auth::id())
+                ->with('vendor')
                 ->get();
 
-            Log::info('🏪 Vendors with coordinates:', ['count' => $vendors->count()]);
-
-            $this->nearbyVendors = $vendors->map(function ($vendor) use ($latitude, $longitude) {
+            $this->nearbyActiveVendors = $activeCheckins->map(function ($checkin) use ($latitude, $longitude) {
+                $vendor = $checkin->vendor;
                 $vendor->distance = $this->calculateDistance(
-                    $latitude, 
-                    $longitude, 
-                    $vendor->latitude, 
-                    $vendor->longitude
+                    $latitude,
+                    $longitude,
+                    $checkin->latitude,
+                    $checkin->longitude
                 );
+                $vendor->checkin_time = $checkin->checkin_time;
                 return $vendor;
             })->filter(function ($vendor) {
-                return $vendor->distance <= 2;
+                return $vendor->distance <= 5;
             })->sortBy('distance')
-              ->take(10)
-              ->values();
-
-            Log::info('✅ Nearby vendors found:', ['count' => $this->nearbyVendors->count()]);
-
+                ->take(5)
+                ->values();
         } catch (\Exception $e) {
-            Log::error('❌ Error finding vendors:', ['error' => $e->getMessage()]);
+            Log::error('❌ Error mencari pedagang aktif:', ['error' => $e->getMessage()]);
         }
     }
 
@@ -101,40 +173,22 @@ class CheckinMap extends Component
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
 
-        $a = sin($dLat/2) * sin($dLat/2) + 
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * 
-             sin($dLon/2) * sin($dLon/2);
-        
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
-        
-        return $earthRadius * $c;
-    }
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
 
-    public function selectVendor($vendorId)
-    {
-        Log::info('🎯 Vendor selected:', ['vendorId' => $vendorId]);
-        
-        $this->selectedVendor = Vendor::find($vendorId);
-        Log::info('✅ Vendor set:', ['vendor' => $this->selectedVendor ? $this->selectedVendor->business_name : 'null']);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 
     public function checkin()
     {
-        Log::info('🚀 ========= CHECKIN PROCESS STARTED =========');
-        Log::info('📋 Checkin data:', [
-            'user_id' => Auth::id(),
-            'vendor' => $this->selectedVendor ? $this->selectedVendor->id : 'NULL',
-            'vendor_name' => $this->selectedVendor ? $this->selectedVendor->business_name : 'NULL',
+        Log::info('🚀 ========= VENDOR CHECKIN STARTED =========', [
+            'vendor_id' => $this->vendorProfile->id,
+            'vendor_name' => $this->vendorProfile->business_name,
             'location' => $this->userLocation
         ]);
-
-        // Validasi
-        if (!$this->selectedVendor) {
-            $error = '❌ Pilih vendor terlebih dahulu';
-            Log::error($error);
-            $this->addError('checkin', $error);
-            return;
-        }
 
         if (!$this->userLocation) {
             $error = '❌ Lokasi tidak tersedia';
@@ -148,50 +202,39 @@ class CheckinMap extends Component
         try {
             $checkinData = [
                 'user_id' => Auth::id(),
-                'vendor_id' => $this->selectedVendor->id,
+                'vendor_id' => $this->vendorProfile->id,
                 'latitude' => $this->userLocation['latitude'],
                 'longitude' => $this->userLocation['longitude'],
-                'location_name' => $this->selectedVendor->business_name,
+                'location_name' => $this->vendorProfile->business_name,
                 'checkin_time' => now(),
                 'status' => 'checked_in'
             ];
 
-            Log::info('💾 Creating checkin record:', $checkinData);
-
-            // CREATE CHECKIN
             $checkin = Checkin::create($checkinData);
 
-            Log::info('🎉 ========= CHECKIN SUCCESS =========', [
+            Log::info('🎉 ========= VENDOR CHECKIN SUCCESS =========', [
                 'checkin_id' => $checkin->id,
-                'checkin_time' => $checkin->checkin_time
+                'vendor_id' => $this->vendorProfile->id
             ]);
 
-            // Update state
-            $this->currentCheckin = Checkin::with('vendor')->find($checkin->id);
-            $this->successMessage = '✅ Check-in berhasil di ' . $this->selectedVendor->business_name;
-            $this->selectedVendor = null;
+            $this->currentCheckin = $checkin;
+            $this->successMessage = '✅ Berhasil aktif di lokasi ini! Pelanggan dapat menemukan Anda.';
             $this->isCheckingIn = false;
-
-            // Refresh vendor list
-            $this->findNearbyVendors();
-
+            $this->findNearbyActiveVendors();
         } catch (\Exception $e) {
-            Log::error('💥 ========= CHECKIN FAILED =========', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+            Log::error('💥 ========= VENDOR CHECKIN FAILED =========', [
+                'error' => $e->getMessage()
             ]);
-            
+
             $this->isCheckingIn = false;
-            $this->addError('checkin', '❌ Gagal melakukan check-in: ' . $e->getMessage());
+            $this->addError('checkin', '❌ Gagal mengaktifkan lokasi: ' . $e->getMessage());
         }
     }
 
     public function checkout()
     {
-        Log::info('🚪 Checkout called', ['checkin_id' => $this->currentCheckin?->id]);
-
         if (!$this->currentCheckin) {
-            $this->addError('checkout', 'Tidak ada checkin aktif');
+            $this->addError('checkout', 'Tidak ada lokasi aktif');
             return;
         }
 
@@ -202,21 +245,18 @@ class CheckinMap extends Component
             ]);
 
             $this->currentCheckin = null;
-            $this->successMessage = '✅ Check-out berhasil!';
-            
+            $this->successMessage = '✅ Lokasi dinonaktifkan. Anda tidak terlihat oleh pelanggan.';
         } catch (\Exception $e) {
-            $this->addError('checkout', 'Gagal check-out: ' . $e->getMessage());
+            $this->addError('checkout', 'Gagal menonaktifkan lokasi: ' . $e->getMessage());
         }
-    }
-
-    // Method untuk clear selected vendor
-    public function clearSelectedVendor()
-    {
-        $this->selectedVendor = null;
     }
 
     public function render()
     {
+        if (!Auth::user()->isVendor()) {
+            return view('livewire.checkin.unauthorized');
+        }
+
         return view('livewire.checkin.checkin-map');
     }
 }

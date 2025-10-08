@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rfid_tags', function (Blueprint $table) {
+        Schema::create('rfids', function (Blueprint $table) {
             $table->id();
-            $table->string('tag_uid')->unique();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->string('uid')->unique();
+            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
+            $table->boolean('is_active')->default('true');
+            $table->text('description');
+
             $table->timestamps();
         });
     }
