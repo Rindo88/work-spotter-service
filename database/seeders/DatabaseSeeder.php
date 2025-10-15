@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\SpotDetector;
+use App\Models\Vendor;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,8 +17,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CategoriesTableSeeder::class,
+            VendorSeeder::class,
             VendorScheduleSeeder::class,
-            // Jika ada seeder lain, tambahkan di sini
+            SmartSpotDetectorSeeder::class,
         ]);
     }
 }

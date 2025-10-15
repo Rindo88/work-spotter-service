@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Checkin;
 use App\Models\Rfid;
 use App\Models\SpotDetector;
+use App\Models\Vendor;
 
-class SpotDetectorController extends Controller
+class SmartDetectorController extends Controller
 {
     /**
      * Checkin via IoT Device dengan RFID
@@ -30,7 +31,7 @@ class SpotDetectorController extends Controller
 
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'device_id' => 'required|string|exists:iot_devices,device_id',
+            'device_id' => 'required|string|exists:spot_detectors,device_id',
             'rfid_uid' => 'required|string|exists:rfid_tags,uid',
             'timestamp' => 'required|date',
             'signature' => 'required|string'
@@ -52,12 +53,19 @@ class SpotDetectorController extends Controller
                 throw new \Exception('Device tidak aktif');
             }
 
+            Log::info('🔑 SIGNATURE CHECK', [
+                'received' => $request->signature,
+                'raw_data' => $request->device_id . $request->rfid_uid . $request->timestamp,
+            ]);
+
+
             // Verifikasi signature (basic example)
-            $expectedSignature = hash_hmac('sha256', 
-                $request->device_id . $request->rfid_uid . $request->timestamp, 
+            $expectedSignature = hash_hmac(
+                'sha256',
+                $request->device_id . $request->rfid_uid . $request->timestamp,
                 $device->secret_key
             );
-            
+
             if (!hash_equals($expectedSignature, $request->signature)) {
                 throw new \Exception('Signature tidak valid');
             }
@@ -70,18 +78,26 @@ class SpotDetectorController extends Controller
                 throw new \Exception('Vendor tidak ditemukan untuk RFID ini');
             }
 
-            // Cek apakah vendor sudah checkin hari ini
-            $existingCheckin = Checkin::where('vendor_id', $vendor->id)
+
+            // 1️⃣ Auto checkout jika masih ada checkin aktif di device lain
+            $activeCheckin = Checkin::where('vendor_id', $vendor->id)
                 ->where('status', 'checked_in')
-                ->whereDate('checkin_time', today())
                 ->first();
 
-            if ($existingCheckin) {
-                // Auto checkout yang lama
-                $existingCheckin->update([
-                    'checkout_time' => now(),
-                    'status' => 'checked_out'
-                ]);
+            if ($activeCheckin) {
+                // Jika checkin dari device lain → auto checkout
+                if ($activeCheckin->latitude != $device->latitude || $activeCheckin->longitude != $device->longitude) {
+                    $activeCheckin->update([
+                        'status' => 'auto_checked_out',
+                        'checkout_time' => now(),
+                    ]);
+
+                    Log::info('📍 Auto checkout karena pindah lokasi', [
+                        'vendor_id' => $vendor->id,
+                        'from_location' => $activeCheckin->location_name,
+                        'to_location' => $device->location_name,
+                    ]);
+                }
             }
 
             // Create checkin record
@@ -112,7 +128,6 @@ class SpotDetectorController extends Controller
                     'location' => $device->location_name
                 ]
             ], Response::HTTP_OK);
-
         } catch (\Exception $e) {
             Log::error('💥 IOT CHECKIN FAILED', [
                 'error' => $e->getMessage(),
@@ -135,7 +150,7 @@ class SpotDetectorController extends Controller
         Log::info('🚪 IOT CHECKOUT REQUEST', $request->all());
 
         $validator = Validator::make($request->all(), [
-            'device_id' => 'required|string|exists:iot_devices,device_id',
+            'device_id' => 'required|string|exists:spot_detectors,device_id',
             'rfid_uid' => 'required|string|exists:rfid_tags,uid',
             'timestamp' => 'required|date',
             'signature' => 'required|string'
@@ -154,11 +169,20 @@ class SpotDetectorController extends Controller
             $rfidTag = Rfid::where('uid', $request->rfid_uid)->first();
             $vendor = $rfidTag->vendor;
 
+
             // Cari checkin aktif
             $activeCheckin = Checkin::where('vendor_id', $vendor->id)
                 ->where('status', 'checked_in')
                 ->whereDate('checkin_time', today())
                 ->first();
+
+            Log::info('🔍 CHECKOUT DEBUG', [
+                'vendor_id' => $vendor->id,
+                'checkins_today' => Checkin::where('vendor_id', $vendor->id)
+                    ->whereDate('checkin_time', today())
+                    ->get(),
+            ]);
+
 
             if (!$activeCheckin) {
                 throw new \Exception('Tidak ada checkin aktif ditemukan');
@@ -183,7 +207,6 @@ class SpotDetectorController extends Controller
                     'checkout_time' => $activeCheckin->checkout_time
                 ]
             ], Response::HTTP_OK);
-
         } catch (\Exception $e) {
             Log::error('❌ IOT CHECKOUT FAILED', [
                 'error' => $e->getMessage()
@@ -203,7 +226,7 @@ class SpotDetectorController extends Controller
     {
         try {
             $device = SpotDetector::where('device_id', $deviceId)->firstOrFail();
-            
+
             $activeCheckins = Checkin::where('latitude', $device->latitude)
                 ->where('longitude', $device->longitude)
                 ->where('status', 'checked_in')
@@ -220,7 +243,7 @@ class SpotDetectorController extends Controller
                         'longitude' => $device->longitude,
                         'is_active' => $device->is_active
                     ],
-                    'active_vendors' => $activeCheckins->map(function($checkin) {
+                    'active_vendors' => $activeCheckins->map(function ($checkin) {
                         return [
                             'vendor_name' => $checkin->vendor->business_name,
                             'checkin_time' => $checkin->checkin_time
@@ -228,7 +251,6 @@ class SpotDetectorController extends Controller
                     })
                 ]
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

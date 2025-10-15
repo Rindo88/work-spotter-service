@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Chat;
+use App\Models\Checkin;
 use App\Models\Vendor;
 use App\Models\ServiceCategory;
 use App\Models\VendorSchedule;
@@ -30,6 +31,68 @@ class VendorController extends Controller
     //         ]);
     //     }
     // }
+
+    public function show(Vendor $vendor)
+    {
+        // Load relationships termasuk jadwal
+        $vendor->load(['user', 'category', 'reviews.user', 'services', 'schedules']);
+
+        // Ambil data checkin terbaru untuk vendor informal
+        $latestCheckin = null;
+        $currentLocation = null;
+
+        if ($vendor->type === 'informal') {
+            $latestCheckin = Checkin::where('vendor_id', $vendor->id)
+                ->where('status', 'checked_in')
+                ->whereDate('checkin_time', today())
+                ->latest()
+                ->first();
+
+            if ($latestCheckin) {
+                $currentLocation = [
+                    'latitude' => $latestCheckin->latitude,
+                    'longitude' => $latestCheckin->longitude,
+                    'location_name' => $latestCheckin->location_name,
+                    'checkin_time' => $latestCheckin->checkin_time,
+                    'is_active' => true
+                ];
+            }
+        }
+
+        // Ambil layanan/produk milik vendor
+        $services = $vendor->services()->latest()->get();
+
+        return view('vendor.show', compact(
+            'vendor',
+            'services',
+            'latestCheckin',
+            'currentLocation'
+        ));
+    }
+
+    public function storeReview(Request $request, Vendor $vendor)
+    {
+        $request->validate([
+            'rating' => 'required|integer|between:1,5',
+            'comment' => 'required|string|max:500',
+        ]);
+
+        // Create review
+        $vendor->reviews()->create([
+            'user_id' => Auth::user()->id,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
+
+        // Update vendor rating average
+        $vendor->update([
+            'rating_avg' => $vendor->reviews()->avg('rating')
+        ]);
+
+        return redirect()->back()->with('success', 'Review berhasil ditambahkan!');
+    }
+
+
     public function showRegistrationForm()
     {
         $categories = Category::all();

@@ -2,13 +2,14 @@
 
 use App\Livewire\Vendor\VendorRegistration;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\VendorController;
 
 require __DIR__ . '/auth.php';
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        return view('home.index');
-    })->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+
 
     Route::get('/profile', function () {
         return view('livewire.profile.index');
@@ -17,14 +18,23 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkin', function () {
         return view('checkin.index');
     })->name('checkin');
+
+    Route::get('/map', function () {
+        return view('map.index');
+    })->name('user.map');
+
+    // Chat Routes - GUNAKAN PARAMETER YANG SAMA
+    Route::get('/chat', App\Livewire\Chat\Index::class)->name('chat.index');
+    Route::get('/chat/vendor/{vendorId}', App\Livewire\Chat\Room::class)->name('chat.room');
+    Route::get('/notifications', App\Livewire\Notification\NotificationsIndex::class)->name('notifications.index');
+    Route::get('/vendor/{vendor}', [VendorController::class, 'show'])->name('vendor.show');
+    Route::post('/vendor/{vendor}/review', [VendorController::class, 'storeReview'])
+        ->name('vendor.review.store');
 });
 
 
 // Vendor Routes
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
-    Route::get('/orders', function () {
-        return view('vendor.orders');
-    })->name('orders');
 
     Route::get('/products', function () {
         return view('vendor.products');
@@ -33,21 +43,4 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
 
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
     Route::get('/become-vendor', VendorRegistration::class)->name('vendor.register');
-});
-
-
-// routes/api.php
-use App\Http\Controllers\Api\SpotDetectorController;
-
-Route::prefix('api')->group(function () {
-    Route::prefix('/vendor/iot')->group(function () {
-        Route::post('/checkin', [SpotDetectorController::class, 'checkin']);
-        Route::post('/checkout', [SpotDetectorController::class, 'checkout']);
-        Route::get('/device/{deviceId}/status', [SpotDetectorController::class, 'deviceStatus']);
-    });
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/chat', App\Livewire\Chat\ChatList::class)->name('chat.list');
-    Route::get('/chat/{userId}', App\Livewire\Chat\ChatRoom::class)->name('chat.room');
 });

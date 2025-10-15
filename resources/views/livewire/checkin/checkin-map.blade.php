@@ -202,6 +202,7 @@
                                 <i class="bi bi-geo-alt me-1"></i>{{ number_format($vendor->distance, 1) }} km
                             </span>
                             <span class="badge bg-success">
+
                                 <i class="bi bi-clock me-1"></i>Aktif {{ $vendor->checkin_time->diffForHumans() }}
                             </span>
                         </div>

@@ -255,5 +255,3 @@ $rfidTags = [
     ]
 ];
 ```
-
-Sekarang dokumentasi API lengkap sudah tersedia dalam format yang mudah dicopy! 🚀

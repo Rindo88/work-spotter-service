@@ -1,11 +1,10 @@
-{{-- resources/views/layouts/profile.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Work Spotter - Profile')</title>
+    <title>Work Spotter - @yield('title', 'Chat')</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -36,12 +35,6 @@
             height: 56px;
         }
 
-        /* Animasi header saat scroll */
-        .header {
-            transition: transform 0.3s ease, opacity 0.4s ease;
-            will-change: transform;
-        }
-
         .header.hidden {
             transform: translateY(-100%);
             opacity: 0;
@@ -64,7 +57,6 @@
     </style>
 
     @livewireStyles
-    @stack('styles')
 </head>
 
 <body>
@@ -76,7 +68,7 @@
                     <i class="bi bi-arrow-left fs-5"></i>
                 </a>
             @else
-                <div style="width: 24px;"></div> <!-- placeholder agar logo tetap center saat di home -->
+                <div style="width: 24px;"></div>
             @endif
 
             <!-- Logo di tengah -->
@@ -90,25 +82,25 @@
                     <i class="bi bi-three-dots-vertical fs-5"></i>
                 </a>
             @else
-                <div style="width: 24px;"></div> <!-- placeholder agar simetris -->
+                <div style="width: 24px;"></div>
             @endif
         </div>
     </header>
 
-    <!-- Content Area -->
+    <!-- Content Area - GUNAKAN $slot untuk Livewire -->
     <main class="content">
-        @yield('content')
+        {{ $slot }}
     </main>
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <div class="d-flex justify-content-around py-2">
-            <a href="{{ route('home') }}" x-navigate
+            <a href="{{ route('home') }}" 
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('home') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-house fs-5"></i>
                 <small>Home</small>
             </a>
-            <a href="{{ route('home') }}" x-navigate
+            <a href="{{ route('home') }}" 
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('search') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-search fs-5"></i>
                 <small>Cari</small>
@@ -124,7 +116,7 @@
                 <i class="bi bi-chat-dots fs-5"></i>
                 <small>Chat</small>
             </a>
-            <a href="{{ route('profile') }}" x-navigate
+            <a href="{{ route('profile') }}"
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('profile') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-person fs-5"></i>
                 <small>Profil</small>
@@ -136,30 +128,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @livewireScripts
 
-    @if (request()->is('/'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const header = document.getElementById('main-header');
-                let lastScrollTop = 0;
-
-                window.addEventListener('scroll', function() {
-                    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-                    // Sembunyikan header saat scroll ke bawah
-                    if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
-                        header.classList.add('hidden');
-                    }
-                    // Tampilkan kembali saat scroll ke atas
-                    else if (currentScrollTop < lastScrollTop) {
-                        header.classList.remove('hidden');
-                    }
-
-                    lastScrollTop = currentScrollTop;
-                });
-            });
-        </script>
-    @endif
-
     <script>
         // Navigation active states
         document.addEventListener('DOMContentLoaded', function() {
@@ -170,9 +138,28 @@
                 }
             });
         });
+
+        // Header hide/show on scroll (only for home)
+        @if(request()->is('/'))
+            document.addEventListener('DOMContentLoaded', function() {
+                const header = document.getElementById('main-header');
+                let lastScrollTop = 0;
+
+                window.addEventListener('scroll', function() {
+                    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                    if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
+                        header.classList.add('hidden');
+                    } else if (currentScrollTop < lastScrollTop) {
+                        header.classList.remove('hidden');
+                    }
+
+                    lastScrollTop = currentScrollTop;
+                });
+            });
+        @endif
     </script>
 
     @stack('scripts')
 </body>
-
 </html>

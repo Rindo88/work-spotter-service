@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // pengirim
-            $table->foreignId('vendor_id')->nullable()->constrained('vendors')->nullOnDelete(); // penerima (opsional)
-            $table->foreignId('receiver_id')->nullable()->constrained('users')->nullOnDelete(); // jika nanti user-to-user
+            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
+            $table->enum('sender_type', ['user', 'vendor']); // penerima (opsional)
             $table->text('message');
             $table->string('attachment_url')->nullable();
             $table->boolean('is_read')->default(false);

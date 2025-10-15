@@ -21,6 +21,8 @@ class Rfid extends Model
         'is_active' => 'boolean'
     ];
 
+    protected $table = 'rfid_tags';
+
     // Relasi ke vendor
     public function vendor()
     {

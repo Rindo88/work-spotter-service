@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rfid_tags', function (Blueprint $table) {
-            $table->id();
-            $table->string('uid')->unique();
-            $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
-            $table->boolean('is_active')->default(true);
-            $table->text('description');
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rfid_tags');
+        Schema::dropIfExists('notifications');
     }
 };

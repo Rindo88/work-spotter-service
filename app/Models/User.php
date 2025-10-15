@@ -32,7 +32,29 @@ class User extends Authenticatable
         ];
     }
 
-    
+
+
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
+
+    public function unreadMessages()
+    {
+        return $this->hasMany(Chat::class)->where('sender_type', 'vendor')->unread();
+    }
+
+    public function latestMessageWithVendor($vendorId = null)
+    {
+        $query = $this->hasOne(Chat::class)->latest();
+
+        if ($vendorId) {
+            $query->where('vendor_id', $vendorId);
+        }
+
+        return $query;
+    }
+
     // Relasi ke model Vendor (table vendors)
     public function vendor()
     {

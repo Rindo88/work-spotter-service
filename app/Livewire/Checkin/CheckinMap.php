@@ -227,6 +227,7 @@ class CheckinMap extends Component
             ]);
 
             $this->isCheckingIn = false;
+            dd($e);
             $this->addError('checkin', '❌ Gagal mengaktifkan lokasi: ' . $e->getMessage());
         }
     }

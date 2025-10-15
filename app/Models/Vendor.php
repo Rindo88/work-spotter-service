@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 // app/Models/Vendor.php
 class Vendor extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'user_id',
@@ -30,6 +31,25 @@ class Vendor extends Model
         'rating_avg' => 'float'
     ];
 
+
+
+
+    public function unreadMessages()
+    {
+        return $this->hasMany(Chat::class)->where('sender_type', 'user')->unread();
+    }
+
+    public function latestMessageWithUser($userId = null)
+    {
+        $query = $this->hasOne(Chat::class)->latest();
+
+        if ($userId) {
+            $query->where('user_id', $userId);
+        }
+
+        return $query;
+    }
+    
     public function user()
     {
         return $this->belongsTo(User::class);

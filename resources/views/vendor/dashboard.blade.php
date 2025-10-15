@@ -1,4 +1,4 @@
-@extends('layouts.vendor-dashboard')
+@extends('layouts.app')
 
 @section('content')
 <!-- Welcome Section -->
