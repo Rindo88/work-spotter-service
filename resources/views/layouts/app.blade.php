@@ -61,6 +61,33 @@
         .nav-item.active {
             color: var(--primary-color) !important;
         }
+
+        /* Palette overrides to avoid default Bootstrap blue */
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: #fff !important;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+        }
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-outline-primary:hover, .btn-outline-primary:focus {
+            background-color: var(--primary-color) !important;
+            color: #fff !important;
+        }
+        .text-primary { color: var(--primary-color) !important; }
+        .bg-primary { background-color: var(--primary-color) !important; }
+        .border-primary { border-color: var(--primary-color) !important; }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.25rem rgba(146, 182, 177, 0.25) !important;
+        }
     </style>
 
     @livewireStyles
@@ -113,7 +140,11 @@
                 <i class="bi bi-search fs-5"></i>
                 <small>Cari</small>
             </a>
-            <a href="{{ route('checkin') }}"
+            <a href="@if (auth()->user()->isVendor())
+                {{ route('checkin') }}
+                @else
+                {{ route('user.map') }}
+            @endif"
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('map') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-geo-alt fs-5"></i>
                 <small>Peta</small>

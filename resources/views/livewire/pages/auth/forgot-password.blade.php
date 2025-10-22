@@ -4,58 +4,67 @@ use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
+new #[Layout('layouts.auth', ['title' => 'Lupa Password'])] class extends Component
 {
     public string $email = '';
 
-    /**
-     * Send a password reset link to the provided email address.
-     */
     public function sendPasswordResetLink(): void
     {
         $this->validate([
             'email' => ['required', 'string', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $this->only('email')
-        );
+        $status = Password::sendResetLink($this->only('email'));
 
-        if ($status != Password::RESET_LINK_SENT) {
+        if ($status !== Password::RESET_LINK_SENT) {
             $this->addError('email', __($status));
-
             return;
         }
 
+        session()->flash('status', __('Link reset password telah dikirim ke email kamu.'));
         $this->reset('email');
-
-        session()->flash('status', __($status));
     }
-}; ?>
+};
+?>
 
-<div>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+<div class="card border-0 shadow-sm p-4">
+    <div class="text-center mb-3">
+        <h5 class="fw-semibold text-dark mb-0">Lupa Password?</h5>
+        <p class="text-muted small mb-0">Masukkan email kamu untuk menerima link reset password.</p>
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    @if (session('status'))
+        <div class="alert alert-success small">{{ session('status') }}</div>
+    @endif
 
-    <form wire:submit="sendPasswordResetLink">
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <form wire:submit="sendPasswordResetLink" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label class="form-label fw-semibold text-dark small">Email</label>
+            <input 
+                wire:model="email"
+                type="email"
+                class="form-control form-control-sm"
+                placeholder="Masukkan email anda"
+                required
+                autofocus
+            >
+            @error('email') 
+                <div class="text-danger small mt-1">{{ $message }}</div> 
+            @enderror
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
+        <button 
+            type="submit"
+            class="btn btn-sm w-100 text-white fw-semibold"
+            style="background-color:#92B6B1"
+        >
+            Kirim Link Reset
+        </button>
     </form>
+
+    <div class="text-center mt-3">
+        <a href="{{ route('login') }}" wire:navigate class="text-decoration-none small" style="color:#92B6B1">
+            Kembali ke Login
+        </a>
+    </div>
 </div>

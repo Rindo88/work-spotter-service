@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-https://yourdomain.com/api/v1
+https://yourdomain.com/api
 ```
 
 ---
@@ -203,7 +203,7 @@ Route::prefix('vendor/iot')->group(function () {
 
 ### Check-in:
 ```bash
-curl -X POST https://yourdomain.com/api/v1/vendor/iot/checkin   -H "Content-Type: application/json"   -d '{
+curl -X POST https://yourdomain.com/api/vendor/iot/checkin   -H "Content-Type: application/json"   -d '{
     "device_id": "SPOT001",
     "rfid_uid": "RFID123456789",
     "timestamp": "2025-10-13 14:30:00",
@@ -213,7 +213,7 @@ curl -X POST https://yourdomain.com/api/v1/vendor/iot/checkin   -H "Content-Type
 
 ### Device Status:
 ```bash
-curl https://yourdomain.com/api/v1/vendor/iot/device/SPOT001/status
+curl https://yourdomain.com/api/vendor/iot/device/SPOT001/status
 ```
 
 ---

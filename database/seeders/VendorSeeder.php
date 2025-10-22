@@ -314,7 +314,7 @@ class VendorSeeder extends Seeder
                 'longitude' => $data['longitude'],
                 'type' => 'informal',
                 'is_rfid' => $index < 15, // 15 pertama pakai RFID
-                'profile_picture' => $data['photo_url'] ?? null,
+                'profile_picture' => $data['photo_url'] ?? null,    
             ]);
 
             if ($vendor->is_rfid) {

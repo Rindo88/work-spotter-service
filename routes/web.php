@@ -8,7 +8,7 @@ use App\Http\Controllers\VendorController;
 require __DIR__ . '/auth.php';
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
     Route::get('/profile', function () {
@@ -23,13 +23,16 @@ Route::middleware(['auth'])->group(function () {
         return view('map.index');
     })->name('user.map');
 
-    // Chat Routes - GUNAKAN PARAMETER YANG SAMA
     Route::get('/chat', App\Livewire\Chat\Index::class)->name('chat.index');
     Route::get('/chat/vendor/{vendorId}', App\Livewire\Chat\Room::class)->name('chat.room');
     Route::get('/notifications', App\Livewire\Notification\NotificationsIndex::class)->name('notifications.index');
     Route::get('/vendor/{vendor}', [VendorController::class, 'show'])->name('vendor.show');
     Route::post('/vendor/{vendor}/review', [VendorController::class, 'storeReview'])
         ->name('vendor.review.store');
+
+    Route::get('/category/{category}', [App\Http\Controllers\CategoryController::class, 'show'])->name('category.show');
+    Route::get('/search', [App\Http\Controllers\SearchController::class, 'results'])->name('search.results');
+Route::get('/quick-access', [App\Http\Controllers\QuickAccessController::class, 'index'])->name('quick-access.index');
 });
 
 

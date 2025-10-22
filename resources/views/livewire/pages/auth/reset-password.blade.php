@@ -1,105 +1,74 @@
 <?php
 
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
+new #[Layout('layouts.auth', ['title' => 'Reset Password'])] class extends Component
 {
-    #[Locked]
-    public string $token = '';
     public string $email = '';
+    public string $token = '';
     public string $password = '';
     public string $password_confirmation = '';
 
-    /**
-     * Mount the component.
-     */
     public function mount(string $token): void
     {
         $this->token = $token;
-
-        $this->email = request()->string('email');
     }
 
-    /**
-     * Reset the password for the given user.
-     */
     public function resetPassword(): void
     {
         $this->validate([
-            'token' => ['required'],
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
             $this->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) {
                 $user->forceFill([
                     'password' => Hash::make($this->password),
-                    'remember_token' => Str::random(60),
                 ])->save();
-
-                event(new PasswordReset($user));
             }
         );
 
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        if ($status != Password::PASSWORD_RESET) {
+        if ($status !== Password::PASSWORD_RESET) {
             $this->addError('email', __($status));
-
             return;
         }
 
-        Session::flash('status', __($status));
-
+        session()->flash('status', __('Password kamu berhasil direset! Silakan login.'));
         $this->redirectRoute('login', navigate: true);
     }
-}; ?>
+};
+?>
 
-<div>
-    <form wire:submit="resetPassword">
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+<div class="card border-0 shadow-sm p-4">
+    <div class="text-center mb-3">
+        <h5 class="fw-semibold text-dark mb-0">Reset Password</h5>
+        <p class="text-muted small mb-0">Masukkan email dan password baru kamu.</p>
+    </div>
+
+    <form wire:submit="resetPassword" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label class="form-label small fw-semibold text-dark">Email</label>
+            <input wire:model="email" type="email" class="form-control form-control-sm" required>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="mb-3">
+            <label class="form-label small fw-semibold text-dark">Password Baru</label>
+            <input wire:model="password" type="password" class="form-control form-control-sm" required>
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
-                          type="password"
-                          name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div class="mb-3">
+            <label class="form-label small fw-semibold text-dark">Konfirmasi Password</label>
+            <input wire:model="password_confirmation" type="password" class="form-control form-control-sm" required>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" class="btn btn-sm w-100 text-white fw-semibold" style="background-color:#92B6B1">
+            Simpan Password Baru
+        </button>
     </form>
 </div>

@@ -10,6 +10,7 @@ class ProfileManager extends Component
 {
     public $currentRole = 'user';
     public $hasVendorProfile = false;
+    public $activeTab = 'profile'; // 'profile', 'settings', 'vendor_dashboard'
     
     public function mount()
     {
@@ -33,7 +34,22 @@ class ProfileManager extends Component
         }
         
         $this->currentRole = $role;
+        $this->activeTab = 'profile'; // Reset ke tab profile saat switch role
         session(['current_profile_role' => $role]);
+    }
+    
+    public function switchTab($tab)
+    {
+        $this->activeTab = $tab;
+    }
+    
+    public function logout()
+    {
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        
+        return $this->redirect('/', navigate: true);
     }
     
     public function render()

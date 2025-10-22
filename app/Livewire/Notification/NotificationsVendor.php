@@ -9,6 +9,7 @@ class NotificationsVendor extends Component
 {
     public $notifications = [];
     public $unreadCount = 0;
+    public $verificationSent = false;
 
     public function mount()
     {
@@ -37,6 +38,27 @@ class NotificationsVendor extends Component
         }
         $this->loadNotifications();
     }
+
+
+    // verifikasi email
+    public function sendVerificationEmail()
+    {
+        $user = Auth::user();
+
+        if ($user->hasVerifiedEmail()) {
+            $this->dispatch('notify', 'Email kamu sudah diverifikasi.');
+            return;
+        }
+
+        try {
+            $user->sendEmailVerificationNotification();
+            $this->verificationSent = true;
+            $this->dispatch('notify', 'Email verifikasi telah dikirim! Silakan cek inbox.');
+        } catch (\Exception $e) {
+            $this->dispatch('notify', 'Gagal mengirim email verifikasi: ' . $e->getMessage());
+        }
+    }
+
 
     public function render()
     {

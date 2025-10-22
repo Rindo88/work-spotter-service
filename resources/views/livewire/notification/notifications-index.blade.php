@@ -6,6 +6,35 @@
         </button>
     </div>
 
+    @if (!auth()->user()->hasVerifiedEmail())
+        <div class="alert alert-warning d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Email kamu belum diverifikasi.</strong>
+                <br>
+                @if ($verificationSent)
+                    <span class="text-success small">Email verifikasi sudah dikirim ✅</span>
+                @else
+                    <span class="small">Silakan kirim verifikasi untuk mengaktifkan akun.</span>
+                @endif
+            </div>
+            
+            <div>
+                @if (!$verificationSent)
+                    <button wire:click="sendVerificationEmail"
+                            wire:loading.attr="disabled"
+                            class="btn btn-sm btn-outline-dark">
+                        <span wire:loading.remove wire:target="sendVerificationEmail">Verifikasi Sekarang</span>
+                        <span wire:loading wire:target="sendVerificationEmail">Mengirim...</span>
+                    </button>
+                @else
+                    <button class="btn btn-sm btn-success" disabled>
+                        Terkirim ✅
+                    </button>
+                @endif
+            </div>
+        </div>
+    @endif
+
     @forelse ($notifications as $notif)
         @php $data = $notif->data; @endphp
         <div class="card mb-2 border-0 shadow-sm {{ $notif->read_at ? 'bg-light' : '' }}">

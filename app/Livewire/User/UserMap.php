@@ -273,4 +273,3 @@ class UserMap extends Component
         return view('livewire.user.user-map');
     }
 }
-

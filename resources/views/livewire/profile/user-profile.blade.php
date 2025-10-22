@@ -14,13 +14,51 @@
                         <i class="bi bi-envelope me-1"></i>
                         {{ $user->email ?? 'Email tidak tersedia' }}
                     </p>
-                    <span class="badge bg-light text-primary">
-                        <i class="bi bi-person me-1"></i>Pengguna
-                    </span>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-primary">
+                            <i class="bi bi-person me-1"></i>Pengguna
+                        </span>
+                        @if($user && $user->hasVerifiedEmail())
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Email Terverifikasi
+                            </span>
+                        @else
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Email Belum Terverifikasi
+                            </span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Email Verification Alert -->
+    @if($user && !$user->hasVerifiedEmail())
+    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+            <div class="flex-grow-1">
+                <strong>Email belum terverifikasi!</strong> Verifikasi email Anda untuk mengakses semua fitur.
+            </div>
+            @if(!$emailVerificationSent)
+            <button type="button" class="btn btn-sm btn-warning" wire:click="sendEmailVerification">
+                Kirim Verifikasi
+            </button>
+            @else
+            <span class="badge bg-success">Terkirim!</span>
+            @endif
+        </div>
+    </div>
+    @endif
+
+    @if($emailVerificationSent)
+    <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        Email verifikasi telah dikirim. Silakan cek inbox email Anda.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
 
     <!-- Profile Information Form -->
     <div class="card border-0 shadow-sm mb-4">

@@ -6,6 +6,7 @@ namespace App\Livewire\Profile;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserProfile extends Component
 {
@@ -16,12 +17,12 @@ class UserProfile extends Component
     public $phone;
     public $profile_picture;
     public $successMessage;
+    public $emailVerificationSent = false;
 
     public function mount()
     {
         $user = Auth::user();
         
-        // Pastikan user tidak null
         if ($user) {
             $this->name = $user->name;
             $this->email = $user->email;
@@ -33,7 +34,6 @@ class UserProfile extends Component
     {
         $user = Auth::user();
         
-        // Pastikan user tidak null sebelum validasi
         if (!$user) {
             return;
         }
@@ -57,6 +57,17 @@ class UserProfile extends Component
         ]);
 
         $this->successMessage = 'Profile berhasil diperbarui!';
+    }
+
+    public function sendEmailVerification()
+    {
+        $user = Auth::user();
+        
+        if ($user && !$user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+            $this->emailVerificationSent = true;
+            $this->successMessage = 'Email verifikasi telah dikirim!';
+        }
     }
 
     public function render()
