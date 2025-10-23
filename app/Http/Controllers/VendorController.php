@@ -170,78 +170,23 @@ class VendorController extends Controller
             ->with('success', 'Pendaftaran berhasil!');
     }
 
-
     public function dashboard()
     {
-        $vendor = Auth::user()->vendor;
-
-        // Stats calculation
-        $stats = [
-            'today_visitors' => $this->getTodayVisitors($vendor),
-        ];
-
-        $recentMessages = $this->getRecentMessages($vendor);
-
-        // Business hours
-        $businessHours = $this->getBusinessHours($vendor);
-
-        return view('vendor.dashboard', compact(
-            'vendor',
-            'recentMessages',
-            'businessHours'
-        ));
+        return view('vendor.dashboard');
     }
 
-    private function getTodayVisitors(Vendor $vendor)
+    public function profile()
     {
-        // Logic to get today's visitors
-        return rand(5, 20); // Placeholder
+        return view('vendor.profile');
     }
 
-
-
-
-    private function getRecentMessages(Vendor $vendor)
+    public function services()
     {
-        return Chat::where('vendor_id', $vendor->id)
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($chat) {
-                return (object) [
-                    'customer_name' => $chat->user->name,
-                    'message' => $chat->message,
-                    'created_at' => $chat->created_at,
-                    'unread' => !$chat->is_read
-                ];
-            });
+        return view('vendor.services');
     }
 
-    private function getBusinessHours(Vendor $vendor)
+    public function schedule()
     {
-        // Default business hours
-        return [
-            'Senin' => ['open' => '08:00', 'close' => '17:00'],
-            'Selasa' => ['open' => '08:00', 'close' => '17:00'],
-            'Rabu' => ['open' => '08:00', 'close' => '17:00'],
-            'Kamis' => ['open' => '08:00', 'close' => '17:00'],
-            'Jumat' => ['open' => '08:00', 'close' => '17:00'],
-            'Sabtu' => ['open' => '09:00', 'close' => '15:00'],
-            'Minggu' => ['open' => null, 'close' => null],
-        ];
-    }
-
-    private function getStatusColor($status)
-    {
-        $colors = [
-            'pending' => 'warning',
-            'confirmed' => 'info',
-            'processing' => 'primary',
-            'completed' => 'success',
-            'cancelled' => 'danger'
-        ];
-
-        return $colors[$status] ?? 'secondary';
+        return view('vendor.schedule');
     }
 }
