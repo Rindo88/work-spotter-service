@@ -33,16 +33,11 @@ class SecurityManager extends Component
         ]);
 
         $this->reset(['current_password', 'new_password', 'new_password_confirmation']);
-        
+
         // Dispatch event
         $this->dispatch('password-updated');
-        
+
         $this->successMessage = 'Password berhasil diperbarui!';
-        
-        // Log activity
-        // activity()
-        //     ->causedBy($user)
-        //     ->log('user_updated_password');
     }
 
     public function logoutOtherDevices()
@@ -52,13 +47,8 @@ class SecurityManager extends Component
         ]);
 
         Auth::logoutOtherDevices($this->current_password);
-        
+
         $this->successMessage = 'Sesi perangkat lain telah diakhiri!';
-        
-        // Log activity
-        // activity()
-        //     ->causedBy(Auth::user())
-        //     ->log('user_logged_out_other_devices');
     }
 
     public function deleteAccount()
@@ -68,11 +58,6 @@ class SecurityManager extends Component
         ]);
 
         $user = Auth::user();
-        
-        // // Log activity before deletion
-        // activity()
-        //     ->causedBy($user)
-        //     ->log('user_deleted_account');
 
         // Logout user
         Auth::logout();
@@ -89,13 +74,7 @@ class SecurityManager extends Component
 
     public function logout()
     {
-        $user = Auth::user();
-        
-        // // Log activity
-        // activity()
-        //     ->causedBy($user)
-        //     ->log('user_logged_out');
-
+        Auth::user();
         Auth::logout();
         session()->invalidate();
         session()->regenerateToken();

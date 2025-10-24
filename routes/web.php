@@ -3,6 +3,7 @@
 use App\Livewire\Vendor\VendorRegistration;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VendorController;
 
 require __DIR__ . '/auth.php';
@@ -10,21 +11,25 @@ require __DIR__ . '/auth.php';
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // Profile Routes
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
-    Route::get('/profile/general', [App\Http\Controllers\ProfileController::class, 'general'])->name('profile.general');
-    Route::get('/profile/security', [App\Http\Controllers\ProfileController::class, 'security'])->name('profile.security');
-    Route::get('/profile/favorites', [App\Http\Controllers\ProfileController::class, 'favorites'])->name('profile.favorites');
-    Route::get('/profile/help', [App\Http\Controllers\ProfileController::class, 'help'])->name('profile.help');
-    Route::get('/profile/feedback', [App\Http\Controllers\ProfileController::class, 'feedback'])->name('profile.feedback');
-
-    // Vendor Dashboard Routes
-    Route::get('/vendor/dashboard', [App\Http\Controllers\VendorController::class, 'dashboard'])->name('vendor.dashboard');
-    Route::get('/vendor/profile', [App\Http\Controllers\VendorController::class, 'profile'])->name('vendor.profile');
-    Route::get('/vendor/services', [App\Http\Controllers\VendorController::class, 'services'])->name('vendor.services');
-    Route::get('/vendor/schedule', [App\Http\Controllers\VendorController::class, 'schedule'])->name('vendor.schedule');
     // routes/web.php
-    Route::post('/profile/switch-role', [App\Http\Controllers\ProfileController::class, 'switchRole'])->name('profile.switch-role');
+
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/general', [ProfileController::class, 'general'])->name('profile.general');
+    Route::get('/profile/security', [ProfileController::class, 'security'])->name('profile.security');
+    Route::get('/profile/favorites', [ProfileController::class, 'favorites'])->name('profile.favorites');
+    Route::get('/profile/help', [ProfileController::class, 'help'])->name('profile.help');
+    Route::get('/profile/feedback', [ProfileController::class, 'feedback'])->name('profile.feedback');
+    Route::post('/profile/switch-role', [ProfileController::class, 'switchRole'])->name('profile.switch-role');
+
+    // Vendor Profile Routes
+    Route::get('/vendor/dashboard', [VendorController::class, 'dashboard'])->name('vendor.dashboard');
+    Route::get('/vendor/profile', [VendorController::class, 'profile'])->name('vendor.profile');
+    Route::get('/vendor/services', [VendorController::class, 'services'])->name('vendor.services');
+    Route::get('/vendor/schedule', [VendorController::class, 'schedule'])->name('vendor.schedule');
+    Route::get('/vendor/rfid', [VendorController::class, 'rfid'])->name('vendor.rfid');
+
+    Route::get('/become-vendor', VendorRegistration::class)->name('vendor.register');
 
 
     Route::get('/checkin', function () {
@@ -52,5 +57,5 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {});
 
 Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
-    Route::get('/become-vendor', VendorRegistration::class)->name('vendor.register');
+    // Route::get('/become-vendor', VendorRegistration::class)->name('vendor.register');
 });

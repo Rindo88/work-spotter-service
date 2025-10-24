@@ -1,14 +1,14 @@
 <?php
-// app/Livewire/Profile/VendorProfileComponent.php
+// app/Livewire/Vendor/ProfileManager.php
 
-namespace App\Livewire\Profile;
+namespace App\Livewire\Vendor;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 
-class VendorProfileComponent extends Component
+class ProfileManager extends Component
 {
     use WithFileUploads;
 
@@ -16,6 +16,8 @@ class VendorProfileComponent extends Component
     public $description;
     public $category_id;
     public $address;
+    public $latitude;
+    public $longitude;
     public $profile_picture;
     public $operational_notes;
     public $type = 'informal';
@@ -32,6 +34,8 @@ class VendorProfileComponent extends Component
             $this->description = $vendor->description;
             $this->category_id = $vendor->category_id;
             $this->address = $vendor->address;
+            $this->latitude = $vendor->latitude;
+            $this->longitude = $vendor->longitude;
             $this->operational_notes = $vendor->operational_notes;
             $this->type = $vendor->type;
             $this->is_rfid = $vendor->is_rfid;
@@ -43,7 +47,7 @@ class VendorProfileComponent extends Component
         $user = Auth::user();
         
         if (!$user || !$user->vendor) {
-            $this->errorMessage = 'Vendor tidak ditemukan.';
+            $this->addError('general', 'Vendor tidak ditemukan.');
             return;
         }
 
@@ -68,6 +72,8 @@ class VendorProfileComponent extends Component
             'description' => $this->description,
             'category_id' => $this->category_id,
             'address' => $this->address,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'operational_notes' => $this->operational_notes,
             'type' => $this->type,
             'is_rfid' => $this->is_rfid,
@@ -79,6 +85,6 @@ class VendorProfileComponent extends Component
     public function render()
     {
         $categories = Category::all();
-        return view('livewire.profile.vendor-profile-component', compact('categories'));
+        return view('livewire.vendor.profile-manager', compact('categories'));
     }
 }

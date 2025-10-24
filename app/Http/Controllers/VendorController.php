@@ -170,6 +170,7 @@ class VendorController extends Controller
             ->with('success', 'Pendaftaran berhasil!');
     }
 
+
     public function dashboard()
     {
         return view('vendor.dashboard');
@@ -188,5 +189,10 @@ class VendorController extends Controller
     public function schedule()
     {
         return view('vendor.schedule');
+    }
+
+    public function rfid()
+    {
+        return view('vendor.rfid');
     }
 }

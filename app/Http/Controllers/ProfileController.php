@@ -38,7 +38,6 @@ class ProfileController extends Controller
         return view('profile.feedback');
     }
 
-    // app/Http/Controllers/ProfileController.php
     public function switchRole(Request $request)
     {
         $role = $request->input('role');
@@ -49,7 +48,7 @@ class ProfileController extends Controller
         }
 
         session(['current_profile_role' => $role]);
-
+        
         return response()->json(['success' => true]);
     }
 }

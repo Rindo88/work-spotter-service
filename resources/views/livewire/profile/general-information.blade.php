@@ -5,7 +5,7 @@
         <i class="bi bi-check-circle me-2"></i>
         {{ $successMessage }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    </div>nd
     @endif
 
     <div class="card border-0 shadow-sm mb-3">

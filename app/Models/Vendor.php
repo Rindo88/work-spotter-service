@@ -49,6 +49,21 @@ class Vendor extends Model
 
         return $query;
     }
+
+    public function rfidTags()
+    {
+        return $this->hasMany(Rfid::class);
+    }
+
+    public function rfidRequests()
+    {
+        return $this->hasMany(RfidRequest::class);
+    }
+
+    public function hasActiveRfid()
+    {
+        return $this->rfidTags()->where('is_active', true)->exists();
+    }
     
     public function user()
     {

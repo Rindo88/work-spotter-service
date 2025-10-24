@@ -96,7 +96,7 @@
 
 <body>
     <!-- Header -->
-    <header class="header" id="main-header">
+    {{-- <header class="header" id="main-header">
         <div class="d-flex align-items-center h-100 px-3">
             @if (!request()->is('/'))
                 <a href="javascript:history.back()" class="text-white text-decoration-none">
@@ -120,7 +120,7 @@
                 <div style="width: 24px;"></div> <!-- placeholder agar simetris -->
             @endif
         </div>
-    </header>
+    </header> --}}
 
     <!-- Content Area -->
     <main class="content">
