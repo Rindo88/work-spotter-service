@@ -8,8 +8,8 @@
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Unified CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     
@@ -20,7 +20,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark gradient-bg">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-briefcase me-2"></i>Work Spotter
+                <i class="bx bx-briefcase me-2"></i>Work Spotter
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -43,22 +43,22 @@
                     @auth
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i>{{ Auth::user()->name }}
+                            <i class="bx bx-user-circle me-1"></i>{{ Auth::user()->name }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.security') }}"><i class="bi bi-shield-lock me-2"></i>Keamanan</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bx bx-user me-2"></i>Profil Saya</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.settings') }}"><i class="bx bx-cog me-2"></i>Pengaturan</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.security') }}"><i class="bx bx-shield me-2"></i>Keamanan</a></li>
                             @if(Auth::user()->vendor)
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ route('vendor.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard Vendor</a></li>
-                            <li><a class="dropdown-item" href="{{ route('vendor.profile') }}"><i class="bi bi-shop me-2"></i>Profil Vendor</a></li>
+                            <li><a class="dropdown-item" href="{{ route('vendor.dashboard') }}"><i class="bx bx-tachometer me-2"></i>Dashboard Vendor</a></li>
+                            <li><a class="dropdown-item" href="{{ route('vendor.profile') }}"><i class="bx bx-store me-2"></i>Profil Vendor</a></li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="#" 
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Keluar
+                                    <i class="bx bx-log-out me-2"></i>Keluar
                                 </a>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
@@ -87,25 +87,25 @@
                         <li class="nav-item">
                             <a class="nav-link {{ Request::is('vendor/dashboard') ? 'active' : '' }}" 
                                href="{{ route('vendor.dashboard') }}">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                <i class="bx bx-tachometer me-2"></i>Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ Request::is('vendor/profile') ? 'active' : '' }}" 
                                href="{{ route('vendor.profile') }}">
-                                <i class="bi bi-shop me-2"></i>Profil Vendor
+                                <i class="bx bx-store me-2"></i>Profil Vendor
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ Request::is('vendor/services') ? 'active' : '' }}" 
                                href="{{ route('vendor.services') }}">
-                                <i class="bi bi-list-task me-2"></i>Layanan
+                                <i class="bx bx-list-ul me-2"></i>Layanan
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ Request::is('vendor/schedule') ? 'active' : '' }}" 
                                href="{{ route('vendor.schedule') }}">
-                                <i class="bi bi-clock me-2"></i>Jadwal
+                                <i class="bx bx-time me-2"></i>Jadwal
                             </a>
                         </li>
                     </ul>

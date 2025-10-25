@@ -12,14 +12,14 @@
                 <div class="ms-3 flex-grow-1">
                     <h5 class="fw-bold mb-1">{{ $user->name }}</h5>
                     <p class="text-muted small mb-0">
-                        <i class="bi bi-envelope me-1"></i>{{ $user->email }}
+                        <i class="bx bx-envelope me-1"></i>{{ $user->email }}
                     </p>
                 </div>
             </div>
 
             <!-- Role Badge -->
             <div class="d-flex align-items-center">
-                <i class="bi bi-person me-2 text-primary"></i>
+                <i class="bx bx-user me-2 text-primary"></i>
                 <span class="badge bg-primary">Pengguna</span>
                 @if ($isVendor)
                     <span class="badge bg-success ms-2">Vendor</span>
@@ -28,11 +28,11 @@
         </div>
         @if ($user && $user->hasVerifiedEmail())
             <span class="badge bg-success">
-                <i class="bi bi-check-circle me-1"></i>Email Terverifikasi
+                <i class="bx bx-check-circle me-1"></i>Email Terverifikasi
             </span>
         @else
             <span class="badge bg-warning text-dark">
-                <i class="bi bi-exclamation-triangle me-1"></i>Email Belum Terverifikasi
+                <i class="bx bx-error me-1"></i>Email Belum Terverifikasi
             </span>
         @endif
     </div>
@@ -41,7 +41,7 @@
     @if ($user && !$user->hasVerifiedEmail())
         <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
             <div class="d-flex align-items-center">
-                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <i class="bx bxs-error me-2 fs-5"></i>
                 <div class="flex-grow-1">
                     <strong>Email belum terverifikasi!</strong> Verifikasi email Anda untuk mengakses semua fitur.
                 </div>
@@ -58,7 +58,7 @@
 
     @if ($emailVerificationSent)
         <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
-            <i class="bi bi-info-circle me-2"></i>
+            <i class="bx bx-info-circle me-2"></i>
             Email verifikasi telah dikirim. Silakan cek inbox email Anda.
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -66,7 +66,7 @@
 
     @if ($successMessage)
         <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
+            <i class="bx bx-check-circle me-2"></i>
             {{ $successMessage }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -81,13 +81,13 @@
                         <button type="button"
                             class="btn flex-fill {{ session('current_profile_role', 'user') === 'user' ? 'btn-primary' : 'btn-light' }} rounded-2 py-2"
                             onclick="switchRole('user')">
-                            <i class="bi bi-person me-1"></i>
+                            <i class="bx bx-user me-1"></i>
                             <span class="small">Pengguna</span>
                         </button>
                         <button type="button"
                             class="btn flex-fill {{ session('current_profile_role') === 'vendor' ? 'btn-primary' : 'btn-light' }} rounded-2 py-2"
                             onclick="switchRole('vendor')">
-                            <i class="bi bi-shop me-1"></i>
+                            <i class="bx bx-store me-1"></i>
                             <span class="small">Vendor</span>
                         </button>
                     </div>
@@ -104,14 +104,14 @@
                 class="d-flex justify-content-between align-items-center p-3 border-bottom text-decoration-none text-dark">
                 <div class="d-flex align-items-center">
                     <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                        <i class="bi bi-person text-primary"></i>
+                        <i class="bx bx-user text-primary"></i>
                     </div>
                     <div>
                         <h6 class="mb-0 fw-semibold">Informasi Umum</h6>
                         <small class="text-muted">Nama, email, telepon</small>
                     </div>
                 </div>
-                <i class="bi bi-chevron-right text-muted"></i>
+                <i class="bx bx-chevron-right text-muted"></i>
             </a>
 
             <!-- Security -->
@@ -119,14 +119,14 @@
                 class="d-flex justify-content-between align-items-center p-3 border-bottom text-decoration-none text-dark">
                 <div class="d-flex align-items-center">
                     <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
-                        <i class="bi bi-shield-lock text-warning"></i>
+                        <i class="bx bx-shield text-warning"></i>
                     </div>
                     <div>
                         <h6 class="mb-0 fw-semibold">Keamanan</h6>
                         <small class="text-muted">Password, privasi</small>
                     </div>
                 </div>
-                <i class="bi bi-chevron-right text-muted"></i>
+                <i class="bx bx-chevron-right text-muted"></i>
             </a>
 
             <!-- Favorites -->
@@ -134,14 +134,14 @@
                 class="d-flex justify-content-between align-items-center p-3 border-bottom text-decoration-none text-dark">
                 <div class="d-flex align-items-center">
                     <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3">
-                        <i class="bi bi-bookmark text-danger"></i>
+                        <i class="bx bx-bookmark text-danger"></i>
                     </div>
                     <div>
                         <h6 class="mb-0 fw-semibold">Favorit</h6>
                         <small class="text-muted">Vendor & layanan tersimpan</small>
                     </div>
                 </div>
-                <i class="bi bi-chevron-right text-muted"></i>
+                <i class="bx bx-chevron-right text-muted"></i>
             </a>
 
             <!-- Help Center -->
@@ -149,14 +149,14 @@
                 class="d-flex justify-content-between align-items-center p-3 border-bottom text-decoration-none text-dark">
                 <div class="d-flex align-items-center">
                     <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
-                        <i class="bi bi-question-circle text-info"></i>
+                        <i class="bx bx-help-circle text-info"></i>
                     </div>
                     <div>
                         <h6 class="mb-0 fw-semibold">Pusat Bantuan</h6>
                         <small class="text-muted">Bantuan & dukungan</small>
                     </div>
                 </div>
-                <i class="bi bi-chevron-right text-muted"></i>
+                <i class="bx bx-chevron-right text-muted"></i>
             </a>
 
             <!-- Share Feedback -->
@@ -164,14 +164,14 @@
                 class="d-flex justify-content-between align-items-center p-3 text-decoration-none text-dark">
                 <div class="d-flex align-items-center">
                     <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
-                        <i class="bi bi-chat-left-text text-success"></i>
+                        <i class="bx bx-chat text-success"></i>
                     </div>
                     <div>
                         <h6 class="mb-0 fw-semibold">Berikan Masukan</h6>
                         <small class="text-muted">Bagikan pengalaman Anda</small>
                     </div>
                 </div>
-                <i class="bi bi-chevron-right text-muted"></i>
+                <i class="bx bx-chevron-right text-muted"></i>
             </a>
         </div>
     </div>
@@ -180,7 +180,7 @@
     @if ($user && !$user->vendor)
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body text-center">
-                <i class="bi bi-shop fs-1 text-primary mb-3"></i>
+                <i class="bx bx-store fs-1 text-primary mb-3"></i>
                 <h5>Jadi Vendor?</h5>
                 <p class="text-muted mb-3">Daftarkan bisnis Anda dan mulai terima pesanan dari customer</p>
                 <a href="{{ route('vendor.register') }}" class="btn btn-primary">
@@ -195,7 +195,7 @@
     <div class="text-center mt-4 mb-5">
         <button wire:click="logout" wire:confirm="Yakin ingin keluar dari akun ini?"
             class="btn btn-light text-danger-emphasis px-4 py-2 rounded-3 shadow-sm border-0 logout-btn">
-            <i class="bi bi-box-arrow-right me-1"></i> Keluar
+            <i class="bx bx-log-out me-1"></i> Keluar
         </button>
     </div>
 </div>

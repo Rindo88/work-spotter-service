@@ -77,7 +77,7 @@
                 
                 <div class="mt-3">
                     <small class="text-muted">
-                        <i class="bi bi-info-circle"></i> Kosongkan atau centang "Tutup" untuk hari yang tidak beroperasi
+                        <i class="bx bx-info-circle"></i> Kosongkan atau centang "Tutup" untuk hari yang tidak beroperasi
                     </small>
                 </div>
             </div>

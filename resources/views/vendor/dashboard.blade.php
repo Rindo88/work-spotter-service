@@ -15,10 +15,10 @@
                 </div>
                 <div class="btn-group">
                     <a href="{{ route('vendor.profile') }}" class="btn btn-outline-success">
-                        <i class="bi bi-shop me-2"></i>Profil Vendor
+                        <i class="bx bx-store me-2"></i>Profil Vendor
                     </a>
                     <a href="{{ route('vendor.services') }}" class="btn btn-outline-primary">
-                        <i class="bi bi-list-task me-2"></i>Layanan
+                        <i class="bx bx-list-ul me-2"></i>Layanan
                     </a>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                             <span class="badge bg-success">+12%</span>
                         </div>
                         <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-cart-check text-primary fs-4"></i>
+                            <i class="bx bx-check-circle text-primary fs-4"></i>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                             <span class="badge bg-success">+8%</span>
                         </div>
                         <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-currency-dollar text-success fs-4"></i>
+                            <i class="bx bx-dollar text-success fs-4"></i>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                             <span class="badge bg-success">+0.2</span>
                         </div>
                         <div class="bg-warning bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-star text-warning fs-4"></i>
+                            <i class="bx bx-star text-warning fs-4"></i>
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                             <span class="badge bg-success">+5</span>
                         </div>
                         <div class="bg-info bg-opacity-10 rounded-circle p-3">
-                            <i class="bi bi-chat-heart text-info fs-4"></i>
+                            <i class="bx bx-heart text-info fs-4"></i>
                         </div>
                     </div>
                 </div>
@@ -151,19 +151,19 @@
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <a href="{{ route('vendor.services') }}" class="btn btn-primary btn-lg text-start">
-                            <i class="bi bi-plus-circle me-2"></i>
+                            <i class="bx bx-plus-circle me-2"></i>
                             Tambah Layanan Baru
                         </a>
                         <a href="{{ route('vendor.schedule') }}" class="btn btn-warning btn-lg text-start">
-                            <i class="bi bi-clock me-2"></i>
+                            <i class="bx bx-time me-2"></i>
                             Atur Jadwal
                         </a>
                         <a href="{{ route('vendor.profile') }}" class="btn btn-success btn-lg text-start">
-                            <i class="bi bi-pencil me-2"></i>
+                            <i class="bx bx-edit me-2"></i>
                             Edit Profil Vendor
                         </a>
                         <a href="#" class="btn btn-info btn-lg text-start">
-                            <i class="bi bi-graph-up me-2"></i>
+                            <i class="bx bx-trending-up me-2"></i>
                             Lihat Laporan
                         </a>
                     </div>

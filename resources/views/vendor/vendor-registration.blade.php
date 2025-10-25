@@ -3,7 +3,7 @@
     @if ($currentStep == 1)
         <div class="mt-4">
             <div class="alert alert-info">
-                <h6><i class="bi bi-info-circle me-2"></i>Informasi Penting</h6>
+                <h6><i class="bx bx-info-circle me-2"></i>Informasi Penting</h6>
                 <p class="mb-0">Pastikan data yang Anda masukkan akurat dan valid. Data ini akan ditampilkan kepada
                     calon pelanggan.</p>
             </div>
@@ -13,7 +13,7 @@
     @if ($currentStep == 2)
         <div class="mt-4">
             <div class="alert alert-warning">
-                <h6><i class="bi bi-geo-alt me-2"></i>Pentingnya Lokasi</h6>
+                <h6><i class="bx bx-map me-2"></i>Pentingnya Lokasi</h6>
                 <p class="mb-0">Lokasi yang akurat membantu pelanggan menemukan usaha Anda dengan mudah. Pastikan
                     koordinat sesuai dengan lokasi sebenarnya.</p>
             </div>
@@ -23,7 +23,7 @@
     @if ($currentStep == 3)
         <div class="mt-4">
             <div class="alert alert-success">
-                <h6><i class="bi bi-camera me-2"></i>Tips Foto Usaha</h6>
+                <h6><i class="bx bx-camera me-2"></i>Tips Foto Usaha</h6>
                 <ul class="mb-0 ps-3">
                     <li>Gunakan foto yang jelas dan terang</li>
                     <li>Tampilkan produk atau layanan terbaik</li>
@@ -128,7 +128,7 @@
                 <!-- Tombol untuk mendapatkan lokasi otomatis -->
                 <div class="coordinate-buttons mb-3">
                     <button type="button" class="btn btn-outline-primary" onclick="getLocation()">
-                        <i class="bi bi-geo-alt me-2"></i>Dapatkan Lokasi Otomatis
+                        <i class="bx bx-map me-2"></i>Dapatkan Lokasi Otomatis
                     </button>
                     <div class="form-text">Klik tombol di atas untuk mendapatkan lokasi Anda secara otomatis</div>
                 </div>
@@ -191,11 +191,11 @@
                                 @if (isset($business_images[$i]))
                                     <img src="{{ $business_images[$i]->temporaryUrl() }}" alt="Preview">
                                     <div class="image-overlay">
-                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                        <i class="bx bxs-check-circle text-success"></i>
                                     </div>
                                 @else
                                     <div class="image-preview-placeholder">
-                                        <i class="bi bi-plus-circle"></i>
+                                        <i class="bx bx-plus-circle"></i>
                                     </div>
                                 @endif
                             </label>
@@ -214,7 +214,7 @@
 
                 @if (count($business_images) > 0)
                     <div class="mt-2 p-2 border rounded bg-light">
-                        <i class="bi bi-info-circle me-2"></i>
+                        <i class="bx bx-info-circle me-2"></i>
                         <span>{{ count($business_images) }} foto terpilih</span>
                     </div>
                 @endif
@@ -227,7 +227,7 @@
     <div class="form-navigation">
         @if ($currentStep > 1)
             <button type="button" class="btn btn-outline-secondary" wire:click="previousStep">
-                <i class="bi bi-arrow-left me-2"></i>Kembali
+                <i class="bx bx-left-arrow-alt me-2"></i>Kembali
             </button>
         @else
             <div></div>
@@ -235,11 +235,11 @@
 
         @if ($currentStep < 3)
             <button type="button" class="btn btn-primary" wire:click="nextStep">
-                Lanjut <i class="bi bi-arrow-right ms-2"></i>
+                Lanjut <i class="bx bx-right-arrow-alt ms-2"></i>
             </button>
         @else
             <button type="button" class="btn btn-success" wire:click="submit">
-                <i class="bi bi-check-circle me-2"></i>Daftar Sekarang
+                <i class="bx bx-check-circle me-2"></i>Daftar Sekarang
             </button>
         @endif
     </div>
@@ -292,7 +292,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <style>
         .image-upload-grid {
@@ -578,7 +578,7 @@
 
             const locationBtn = document.querySelector('[onclick="getLocation()"]');
             const originalText = locationBtn.innerHTML;
-            locationBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Mendeteksi...';
+            locationBtn.innerHTML = '<i class="bx bx-refresh spinner"></i> Mendeteksi...';
             locationBtn.disabled = true;
 
             navigator.geolocation.getCurrentPosition(
@@ -706,7 +706,7 @@
                                 preview.innerHTML = `
                                 <img src="${e.target.result}" class="w-100 h-100 object-fit-cover">
                                 <div class="image-overlay">
-                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <i class="bx bxs-check-circle text-success"></i>
                                 </div>
                             `;
                             }

@@ -2,7 +2,7 @@
 <div>
     @if($successMessage)
     <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-        <i class="bi bi-check-circle me-2"></i>
+        <i class="bx bx-check-circle me-2"></i>
         {{ $successMessage }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -19,7 +19,7 @@
                             <button type="button" 
                                     class="btn btn-link p-1"
                                     wire:click="$set('rating', {{ $i }})">
-                                <i class="bi bi-star{{ $i <= $rating ? '-fill' : '' }} fs-2 {{ $i <= $rating ? 'text-warning' : 'text-muted' }}"></i>
+                                <i class="bx bx{{ $i <= $rating ? 's' : '' }}-star fs-2 {{ $i <= $rating ? 'text-warning' : 'text-muted' }}"></i>
                             </button>
                         @endfor
                     </div>
@@ -35,7 +35,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2">
-                    <i class="bi bi-send me-2"></i>
+                    <i class="bx bx-send me-2"></i>
                     Kirim Masukan
                 </button>
             </form>
@@ -50,7 +50,7 @@
             </p>
             <div class="d-grid gap-2">
                 <a href="mailto:feedback@workspotter.com" class="btn btn-outline-primary">
-                    <i class="bi bi-envelope me-2"></i>Email Feedback
+                    <i class="bx bx-envelope me-2"></i>Email Feedback
                 </a>
             </div>
         </div>
