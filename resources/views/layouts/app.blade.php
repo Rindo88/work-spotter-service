@@ -11,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<<<<<<< HEAD
 
     <style>
         :root {
@@ -117,6 +118,10 @@
             box-shadow: 0 0 0 0.25rem rgba(146, 182, 177, 0.25) !important;
         }
     </style>
+=======
+    <!-- Unified CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+>>>>>>> 8bd7278e98a29c51b67146ea89d412504ceb421f
 
     @livewireStyles
     @stack('styles')
@@ -156,6 +161,10 @@
                 <i class="bi bi-geo-alt fs-5"></i>
                 <small>Peta</small>
             </a>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8bd7278e98a29c51b67146ea89d412504ceb421f
             <a href="{{ route('chat.index') }}"
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('chat.*') ? 'active' : '' }}">
                 <i class="bi bi-chat-dots fs-5"></i>
