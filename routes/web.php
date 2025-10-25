@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat', App\Livewire\Chat\Index::class)->name('chat.index');
     Route::get('/chat/vendor/{vendorId}', App\Livewire\Chat\Room::class)->name('chat.room');
     Route::get('/notifications', App\Livewire\Notification\NotificationsIndex::class)->name('notifications.index');
+    Route::get('/notifications/{id}', App\Livewire\Notification\NotificationDetail::class)->name('notifications.detail');
     Route::get('/vendor/{vendor}', [VendorController::class, 'show'])->name('vendor.show');
     Route::post('/vendor/{vendor}/review', [VendorController::class, 'storeReview'])
         ->name('vendor.review.store');

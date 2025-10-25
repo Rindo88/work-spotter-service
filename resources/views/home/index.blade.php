@@ -17,7 +17,7 @@
                 </div>
 
                 <!-- Notification Icon -->
-                @livewire('notification.notifications-vendor')
+                @livewire('notification.notifications-user')
             </div>
         </div>
     </div>

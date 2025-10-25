@@ -86,21 +86,21 @@
 <script>
 // Tambahkan method untuk set all open/closed di component
 // app/Livewire/Vendor/ScheduleManager.php
-// public function setAllOpen()
-// {
-//     foreach ($this->days as $key => $day) {
-//         $this->schedules[$key]['is_closed'] = false;
-//         $this->schedules[$key]['open_time'] = '08:00';
-//         $this->schedules[$key]['close_time'] = '17:00';
-//     }
-// }
+public function setAllOpen()
+{
+    foreach ($this->days as $key => $day) {
+        $this->schedules[$key]['is_closed'] = false;
+        $this->schedules[$key]['open_time'] = '08:00';
+        $this->schedules[$key]['close_time'] = '17:00';
+    }
+}
 
-// public function setAllClosed()
-// {
-//     foreach ($this->days as $key => $day) {
-//         $this->schedules[$key]['is_closed'] = true;
-//         $this->schedules[$key]['open_time'] = '';
-//         $this->schedules[$key]['close_time'] = '';
-//     }
-// }
+public function setAllClosed()
+{
+    foreach ($this->days as $key => $day) {
+        $this->schedules[$key]['is_closed'] = true;
+        $this->schedules[$key]['open_time'] = '';
+        $this->schedules[$key]['close_time'] = '';
+    }
+}
 </script>
