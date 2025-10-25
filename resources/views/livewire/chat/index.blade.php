@@ -1,10 +1,6 @@
 <div>
-    <!-- DEBUG: Pastikan component ter-load -->
-    <!-- User: {{ auth()->user()->name }}, Type: {{ auth()->user()->role }} -->
     
     <!-- Header -->
-    <div class="bg-white border-bottom p-3 sticky-top" style="top: 56px;">
-        <h5 class="mb-0 fw-bold text-center">Chat</h5>
         @if($this->userType === 'user' && $this->chatPartners->sum('unread_messages_count') > 0)
             <small class="text-center d-block text-muted">
                 {{ $this->chatPartners->sum('unread_messages_count') }} pesan belum dibaca
@@ -14,7 +10,6 @@
                 {{ $this->chatPartners->sum('unread_messages_count') }} pesan belum dibaca
             </small>
         @endif
-    </div>
 
     <!-- Error State -->
     @if($error)
@@ -96,15 +91,4 @@
             @endif
         @endforelse
     </div>
-
-    <!-- Debug Info (Hanya di development) -->
-    @if(env('APP_DEBUG'))
-        <div class="p-3 bg-light border-top">
-            <small class="text-muted">
-                Debug: User Type: {{ $this->userType }}, 
-                Partners: {{ $this->chatPartners->count() }},
-                Error: {{ $error ?? 'None' }}
-            </small>
-        </div>
-    @endif
 </div>

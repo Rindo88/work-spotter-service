@@ -3,8 +3,9 @@
 
 @section('title', 'Profil Saya - Work Spotter')
 
+@section('header-title', 'Profil Saya')
 @section('content')
-<div class="container-fluid px-3 py-2">
+<div>
     <!-- Tampilkan berdasarkan role yang aktif -->
     @if(session('current_profile_role') === 'vendor' && Auth::user()->vendor)
         <!-- Vendor Profile View -->
@@ -15,3 +16,5 @@
     @endif
 </div>
 @endsection
+
+
