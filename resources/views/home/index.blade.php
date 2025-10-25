@@ -59,25 +59,25 @@
             </a>
         </div>
         <div class="card-body">
-            <div class="row g-3">
+            <div class="row g-0">
                 @php
                     $quickAccess = [
-                        ['icon' => 'bx-cart', 'color' => '#28a745,#20c997', 'title' => 'Pedagang Informal', 'desc' => 'Kaki lima & UMKM', 'type' => 'informal'],
-                        ['icon' => 'bxs-star', 'color' => '#ffc107,#fd7e14', 'title' => 'Rating Tertinggi', 'desc' => 'Terbaik & Terpercaya', 'type' => 'top-rated'],
-                        ['icon' => 'bxs-map', 'color' => '#dc3545,#e83e8c', 'title' => 'Lokasi Terdekat', 'desc' => 'Ditempat Anda', 'type' => 'nearby'],
-                        ['icon' => 'bxs-offer', 'color' => '#6f42c1,#6610f2', 'title' => 'Promo Spesial', 'desc' => 'Diskon & Penawaran', 'type' => 'promo'],
+                        ['icon' => 'bx-cart', 'color' => 'var(--primary-color)', 'title' => 'Pedagang Informal', 'desc' => 'Kaki lima & UMKM', 'type' => 'informal'],
+                        ['icon' => 'bxs-star', 'color' => 'var(--primary-color)', 'title' => 'Rating Tertinggi', 'desc' => 'Terbaik & Terpercaya', 'type' => 'top-rated'],
+                        ['icon' => 'bxs-map', 'color' => 'var(--primary-color)', 'title' => 'Lokasi Terdekat', 'desc' => 'Ditempat Anda', 'type' => 'nearby'],
+                        ['icon' => 'bxs-offer', 'color' => 'var(--primary-color)', 'title' => 'Promo Spesial', 'desc' => 'Diskon & Penawaran', 'type' => 'promo'],
                     ];
                 @endphp
-                @foreach ($quickAccess as $item)
-                    <div class="col-6 col-md-3">
+                @foreach ($quickAccess as $index => $item)
+                    <div class="col-6 {{ $index % 2 === 0 ? 'border-end border-secondary-subtle' : '' }} {{ $index < 2 ? 'border-bottom border-secondary-subtle' : '' }}">
                         <a href="{{ route('quick-access.index', ['type' => $item['type']]) }}" class="text-decoration-none">
                             <div class="quick-access-card text-center p-3 h-100">
                                 <div class="icon-wrapper mb-2 mx-auto rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 60px; height: 60px; background: linear-gradient(135deg, {{ $item['color'] }});">
+                                    style="width: 60px; height: 60px; background: {{ $item['color'] }};">
                                     <i class="bx {{ $item['icon'] }} fs-4 text-white"></i>
                                 </div>
-                                <h6 class="mb-1 fw-bold">{{ $item['title'] }}</h6>
-                                <small class="text-muted">{{ $item['desc'] }}</small>
+                                <h6 class="small text-dark mb-1 fw-bold text-nowrap">{{ $item['title'] }}</h6>
+                                <small class="text-muted text-nowrap">{{ $item['desc'] }}</small>
                             </div>
                         </a>
                     </div>
@@ -95,21 +95,21 @@
             <div class="row g-3 text-center">
                 @php
                     $categoryIcons = [
-                        'Makanan' => ['icon' => 'bxs-coffee', 'color' => 'text-warning'],
-                        'Minuman' => ['icon' => 'bx-drink', 'color' => 'text-success'],
+                        'Makanan' => ['icon' => 'bxs-coffee', 'color' => 'text-primary'],
+                        'Minuman' => ['icon' => 'bx-drink', 'color' => 'text-primary'],
                         'Reparasi' => ['icon' => 'bx-wrench', 'color' => 'text-primary'],
-                        'Fashion' => ['icon' => 'bxs-shopping-bag', 'color' => 'text-info'],
-                        'Elektronik' => ['icon' => 'bx-laptop', 'color' => 'text-secondary'],
-                        'Kesehatan' => ['icon' => 'bx-health', 'color' => 'text-danger'],
+                        'Pakaian' => ['icon' => 'bxs-t-shirt', 'color' => 'text-primary'],
+                        'Elektronik' => ['icon' => 'bx-laptop', 'color' => 'text-primary'],
+                        'Kesehatan' => ['icon' => 'bx-health', 'color' => 'text-primary'],
                         'Pendidikan' => ['icon' => 'bx-book', 'color' => 'text-primary'],
-                        'Transportasi' => ['icon' => 'bx-car', 'color' => 'text-dark'],
-                        'Jasa' => ['icon' => 'bx-briefcase', 'color' => 'text-info'],
+                        'Transportasi' => ['icon' => 'bx-car', 'color' => 'text-primary'],
+                        'Jasa' => ['icon' => 'bx-briefcase', 'color' => 'text-primary'],
                         'Lainnya' => ['icon' => 'bx-dots-horizontal-rounded', 'color' => 'text-muted'],
                         'default' => ['icon' => 'bx-dots-horizontal-rounded', 'color' => 'text-muted'],
                     ];
                 @endphp
-                @foreach ($categories as $category)
-                    <div class="col-4 col-md-2">
+                @foreach ($categories as $index => $category)
+                    <div class="col-4 col-md-2 {{ $index % 3 !== 2 ? 'border-end border-secondary-subtle' : '' }} {{ $index < count($categories) - (count($categories) % 3 ?: 3) ? 'border-secondary-subtle' : '' }}">
                         <a href="{{ route('category.show', $category) }}" class="text-decoration-none">
                             <div class="category-card p-2">
                                 <div class="icon-wrapper mb-2 mx-auto">
