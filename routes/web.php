@@ -51,6 +51,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/category/{category}', [App\Http\Controllers\CategoryController::class, 'show'])->name('category.show');
     Route::get('/search', [App\Http\Controllers\SearchController::class, 'results'])->name('search.results');
     Route::get('/quick-access', [App\Http\Controllers\QuickAccessController::class, 'index'])->name('quick-access.index');
+    
+    // API route for load more vendors
+    Route::get('/api/vendors/load-more', [HomeController::class, 'loadMoreVendors'])->name('api.vendors.load-more');
 });
 
 

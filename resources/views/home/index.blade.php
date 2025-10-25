@@ -167,34 +167,22 @@
             <h5 class="mb-0 fw-bold">Semua Vendor</h5>
         </div>
         <div class="card-body">
-            <div class="row g-3">
+            <div class="row g-3" id="vendors-container">
                 @forelse ($vendors as $vendor)
-                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
-                        <a href="{{ route('vendor.show', $vendor) }}" class="text-decoration-none text-dark">
-                            <div class="vendor-grid-card h-100">
-                                <img src="{{ $vendor->image_url ?? 'https://placehold.co/300x200' }}"
-                                    class="w-100 rounded-3 mb-2" style="height: 140px; object-fit: cover;">
-                                <h6 class="fw-bold mb-1 text-truncate">{{ $vendor->business_name }}</h6>
-                                <p class="text-muted small mb-1 text-truncate">{{ $vendor->category->name ?? '-' }}</p>
-                                <div class="d-flex justify-content-between align-items-center small">
-                                    <span class="badge bg-success">
-                                        <i class="bx bxs-star me-1"></i>{{ number_format($vendor->rating, 1) }}
-                                    </span>
-                                    <span class="text-muted">
-                                        <i class="bx bx-map-pin me-1"></i>{{ $vendor->distance ?? '—' }} km
-                                    </span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                    @include('partials.vendor-card', ['vendor' => $vendor])
                 @empty
                     <p class="text-center text-muted small">Belum ada vendor yang terdaftar.</p>
                 @endforelse
             </div>
 
+            @if($vendors->hasMorePages())
             <div class="d-flex justify-content-center mt-4">
-                {{ $vendors->links('pagination::bootstrap-5') }}
+                <button id="load-more-btn" class="btn btn-outline-primary rounded-pill px-4 py-2" data-page="2">
+                    <span class="btn-text">Muat Lebih Banyak</span>
+                    <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                </button>
             </div>
+            @endif
         </div>
     </div>
 
@@ -225,4 +213,66 @@
     white-space: nowrap;
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const vendorsContainer = document.getElementById('vendors-container');
+    
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            const page = this.getAttribute('data-page');
+            const btnText = this.querySelector('.btn-text');
+            const spinner = this.querySelector('.spinner-border');
+            
+            // Show loading state
+            btnText.textContent = 'Memuat...';
+            spinner.classList.remove('d-none');
+            this.disabled = true;
+            
+            // Make AJAX request
+            fetch(`{{ route('api.vendors.load-more') }}?page=${page}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.html) {
+                    // Append new vendors to container
+                    vendorsContainer.insertAdjacentHTML('beforeend', data.html);
+                    
+                    // Update page number for next request
+                    this.setAttribute('data-page', data.nextPage);
+                    
+                    // Hide button if no more data
+                    if (!data.hasMore) {
+                        this.style.display = 'none';
+                    }
+                }
+                
+                // Reset button state
+                btnText.textContent = 'Muat Lebih Banyak';
+                spinner.classList.add('d-none');
+                this.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading more vendors:', error);
+                
+                // Reset button state
+                btnText.textContent = 'Muat Lebih Banyak';
+                spinner.classList.add('d-none');
+                this.disabled = false;
+                
+                // Show error message
+                alert('Terjadi kesalahan saat memuat data. Silakan coba lagi.');
+            });
+        });
+    }
+});
+</script>
 @endpush
