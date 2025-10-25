@@ -9,10 +9,114 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Boxicons -->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <!-- Unified CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary-color: #92B6B1;
+            --secondary-color: #6D8B87;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            padding-bottom: 70px;
+            padding-top: 56px;
+        }
+
+        /* Header baru */
+        .header {
+            background-color: white;
+            border-bottom: 1px solid #dee2e6;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .header h5 {
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header a {
+            color: #212529;
+            text-decoration: none;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border-top: none;
+        }
+
+        .bottom-nav .nav-item {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .bottom-nav .nav-item.active {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .bottom-nav .nav-item:hover {
+            color: #fff !important;
+        }
+
+        /* Buttons and palette */
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: #fff !important;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus {
+            background-color: var(--primary-color) !important;
+            color: #fff !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.25rem rgba(146, 182, 177, 0.25) !important;
+        }
+    </style>
 
     @livewireStyles
     @stack('styles')
@@ -22,9 +126,17 @@
     <!-- Header Baru -->
     <header class="header">
         <div class="d-flex align-items-center w-100">
+<<<<<<< HEAD
             <a href="javascript:history.back()" class="me-3">
                 <i class="bx bx-arrow-back fs-5"></i>
             </a>
+=======
+            @if (!request()->routeIs('home'))
+                <a href="javascript:history.back()" class="me-3">
+                    <i class="bi bi-arrow-left fs-5"></i>
+                </a>
+            @endif
+>>>>>>> 54b3068ea137b2c286cd7f6181034060903e3959
             <h5 class="fw-bold mb-0">@yield('header-title', 'Work Spotter')</h5>
         </div>
     </header>
