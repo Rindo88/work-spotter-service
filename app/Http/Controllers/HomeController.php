@@ -31,4 +31,30 @@ class HomeController extends Controller
 
         return view('home.index', compact('vendors', 'recommendedVendors', 'categories'));
     }
+
+    public function loadMoreVendors(Request $request)
+    {
+        $page = $request->get('page', 1);
+        $perPage = 6;
+        
+        $vendors = Vendor::with('category')
+            ->select('vendors.*', DB::raw('(SELECT COUNT(*) FROM reviews WHERE reviews.vendor_id = vendors.id) as review_count'))
+            ->latest()
+            ->skip(($page - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        $hasMore = Vendor::count() > ($page * $perPage);
+
+        $html = '';
+        foreach ($vendors as $vendor) {
+            $html .= view('partials.vendor-card', compact('vendor'))->render();
+        }
+
+        return response()->json([
+            'html' => $html,
+            'hasMore' => $hasMore,
+            'nextPage' => $page + 1
+        ]);
+    }
 }
