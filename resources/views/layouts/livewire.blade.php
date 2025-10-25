@@ -10,56 +10,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
-    <style>
-        :root {
-            --primary-color: #92B6B1;
-            --secondary-color: #6D8B87;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            padding-bottom: 70px;
-            padding-top: 56px;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            height: 56px;
-        }
-
-        .header.hidden {
-            transform: translateY(-100%);
-            opacity: 0;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            border-top: 1px solid #dee2e6;
-        }
-
-        .nav-item.active {
-            color: var(--primary-color) !important;
-        }
-    </style>
+    <!-- Unified CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
     @livewireStyles
 </head>
 
-<body>
+<body class="with-header">
     <!-- Header -->
     <header class="header" id="main-header">
         <div class="d-flex align-items-center h-100 px-3">

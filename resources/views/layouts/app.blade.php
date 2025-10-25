@@ -11,84 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
-    <style>
-        :root {
-            --primary-color: #92B6B1;
-            --secondary-color: #6D8B87;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            padding-bottom: 70px;
-            padding-top: 56px;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            height: 56px;
-        }
-
-        /* Animasi header saat scroll */
-        .header {
-            transition: transform 0.3s ease, opacity 0.4s ease;
-            will-change: transform;
-        }
-
-        .header.hidden {
-            transform: translateY(-100%);
-            opacity: 0;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            border-top: 1px solid #dee2e6;
-        }
-
-        .nav-item.active {
-            color: var(--primary-color) !important;
-        }
-
-        /* Palette overrides to avoid default Bootstrap blue */
-        .btn-primary {
-            background-color: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
-            color: #fff !important;
-        }
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: var(--secondary-color) !important;
-            border-color: var(--secondary-color) !important;
-        }
-        .btn-outline-primary {
-            color: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
-        }
-        .btn-outline-primary:hover, .btn-outline-primary:focus {
-            background-color: var(--primary-color) !important;
-            color: #fff !important;
-        }
-        .text-primary { color: var(--primary-color) !important; }
-        .bg-primary { background-color: var(--primary-color) !important; }
-        .border-primary { border-color: var(--primary-color) !important; }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 0.25rem rgba(146, 182, 177, 0.25) !important;
-        }
-    </style>
+    <!-- Unified CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 
     @livewireStyles
     @stack('styles')
@@ -149,7 +73,7 @@
                 <i class="bi bi-geo-alt fs-5"></i>
                 <small>Peta</small>
             </a>
-           
+
             <a href="{{ route('chat.index') }}"
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('chat.*') ? 'active text-primary' : 'text-muted' }}">
                 <i class="bi bi-chat-dots fs-5"></i>

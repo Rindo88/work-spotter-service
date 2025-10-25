@@ -6,43 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Work Spotter')</title>
     
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Unified CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     
     @livewireStyles
-    <style>
-        .sidebar {
-            min-height: calc(100vh - 56px);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .nav-link {
-            color: #fff !important;
-            border-radius: 8px;
-            margin: 2px 0;
-            transition: all 0.3s ease;
-        }
-        .nav-link:hover, .nav-link.active {
-            background: rgba(255,255,255,0.1);
-            transform: translateX(5px);
-        }
-        .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .stats-card {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-    </style>
 </head>
 <body>
     <!-- Navigation -->
