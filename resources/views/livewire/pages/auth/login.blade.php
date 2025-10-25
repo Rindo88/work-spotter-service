@@ -35,12 +35,12 @@ class extends Component
 
     <form wire:submit="login" class="needs-validation" novalidate>
         <div class="mb-4">
-            <label class="form-label fw-semibold text-dark small">Username / Email</label>
+            <label class="form-label fw-semibold text-dark small">Email</label>
             <input
                 wire:model="form.email"
                 type="text"
                 class="form-control form-control-sm"
-                placeholder="Masukkan username atau email anda"
+                placeholder="Masukkan email anda"
                 required
                 autofocus
             >

@@ -43,6 +43,18 @@ class ScheduleManager extends Component
         }
     }
 
+    public function handleDayClosed($day)
+    {
+        $isClosed = $this->schedules[$day]['is_closed'] ?? false;
+
+        if ($isClosed) {
+            // Jika ditutup, kosongkan jam
+            $this->schedules[$day]['open_time'] = '';
+            $this->schedules[$day]['close_time'] = '';
+        }
+        // Jangan toggle ulang; cukup respons terhadap nilai terbaru dari wire:model
+    }
+
     public function saveSchedules()
     {
         $vendor = Auth::user()->vendor;
@@ -52,14 +64,14 @@ class ScheduleManager extends Component
 
         // Create new schedules
         foreach ($this->schedules as $day => $schedule) {
-            if (!$schedule['is_closed'] && $schedule['open_time'] && $schedule['close_time']) {
+            if (!(bool)($schedule['is_closed'] ?? false) && ($schedule['open_time'] ?? false) && ($schedule['close_time'] ?? false)) {
                 VendorSchedule::create([
                     'vendor_id' => $vendor->id,
                     'day' => $day,
                     'open_time' => $schedule['open_time'],
                     'close_time' => $schedule['close_time'],
                     'is_closed' => false,
-                    'notes' => $schedule['notes'],
+                    'notes' => $schedule['notes'] ?? null,
                 ]);
             } else {
                 VendorSchedule::create([
@@ -68,17 +80,12 @@ class ScheduleManager extends Component
                     'open_time' => null,
                     'close_time' => null,
                     'is_closed' => true,
-                    'notes' => $schedule['notes'],
+                    'notes' => $schedule['notes'] ?? null,
                 ]);
             }
         }
 
         session()->flash('success', 'Jadwal operasional berhasil disimpan!');
-    }
-
-    public function toggleDayClosed($day)
-    {
-        $this->schedules[$day]['is_closed'] = !$this->schedules[$day]['is_closed'];
     }
 
     public function setAllOpen()

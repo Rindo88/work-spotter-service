@@ -5,7 +5,7 @@ namespace App\Livewire\Notification;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
-class NotificationsVendor extends Component
+class NotificationsUser extends Component
 {
     public $notifications = [];
     public $unreadCount = 0;
@@ -62,6 +62,6 @@ class NotificationsVendor extends Component
 
     public function render()
     {
-        return view('livewire.notification.notifications-vendor');
+        return view('livewire.notification.notifications-user');
     }
 }

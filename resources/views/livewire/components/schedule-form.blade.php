@@ -26,37 +26,46 @@
                 @endphp
                 
                 @foreach($days as $dayKey => $dayLabel)
-                    <div class="row mb-2 align-items-center schedule-day-row">
+                    <div class="row mb-3 align-items-start schedule-day-row">
                         <div class="col-12 col-md-3 mb-2 mb-md-0">
                             <label class="form-check-label fw-medium">{{ $dayLabel }}</label>
                         </div>
                         <div class="col-5 col-md-3">
                             <input type="time" class="form-control form-control-sm" 
-                                   wire:model="schedules.{{ $dayKey }}.open"
-                                   {{ $schedules[$dayKey]['closed'] ?? false ? 'disabled' : '' }}
+                                   wire:model="schedules.{{ $dayKey }}.open_time"
+                                   {{ $schedules[$dayKey]['is_closed'] ?? false ? 'disabled' : '' }}
                                    id="open_{{ $dayKey }}_{{ $componentId }}"> <!-- Gunakan $componentId -->
-                            @error("schedules.{$dayKey}.open")
+                            @error("schedules.{$dayKey}.open_time")
                                 <small class="text-danger d-block">{{ $message }}</small>
                             @enderror
                         </div>
                         <div class="col-5 col-md-3">
                             <input type="time" class="form-control form-control-sm" 
-                                   wire:model="schedules.{{ $dayKey }}.close"
-                                   {{ $schedules[$dayKey]['closed'] ?? false ? 'disabled' : '' }}
+                                   wire:model="schedules.{{ $dayKey }}.close_time"
+                                   {{ $schedules[$dayKey]['is_closed'] ?? false ? 'disabled' : '' }}
                                    id="close_{{ $dayKey }}_{{ $componentId }}"> <!-- Gunakan $componentId -->
-                            @error("schedules.{$dayKey}.close")
+                            @error("schedules.{$dayKey}.close_time")
                                 <small class="text-danger d-block">{{ $message }}</small>
                             @enderror
                         </div>
                         <div class="col-2 col-md-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" 
-                                       wire:model="schedules.{{ $dayKey }}.closed"
+                                       wire:model="schedules.{{ $dayKey }}.is_closed"
                                        id="closed_{{ $dayKey }}_{{ $componentId }}"> <!-- Gunakan $componentId -->
                                 <label class="form-check-label small" for="closed_{{ $dayKey }}_{{ $componentId }}">
                                     Tutup
                                 </label>
                             </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <input type="text" class="form-control form-control-sm" 
+                                   placeholder="Catatan (opsional)" 
+                                   wire:model="schedules.{{ $dayKey }}.notes"
+                                   id="notes_{{ $dayKey }}_{{ $componentId }}">
+                            @error("schedules.{$dayKey}.notes")
+                                <small class="text-danger d-block">{{ $message }}</small>
+                            @enderror
                         </div>
                     </div>
                     

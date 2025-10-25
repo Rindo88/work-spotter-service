@@ -195,4 +195,9 @@ class VendorController extends Controller
     {
         return view('vendor.rfid');
     }
+
+    public function location()
+    {
+        return view('vendor.location');
+    }
 }

@@ -14,10 +14,21 @@ class Service extends Model
         'image_url',
     ];
 
+    // Relasi favorites
+       public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    // Count favorites
+    public function getFavoritesCountAttribute()
+    {
+        return $this->favorites()->count();
+    }
+
+    // Relasi vendor
     public function vendor()
     {
         return $this->belongsTo(Vendor::class);
     }
-
-    
 }

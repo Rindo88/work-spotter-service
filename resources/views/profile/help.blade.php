@@ -2,15 +2,10 @@
 @extends('layouts.app')
 
 @section('title', 'Pusat Bantuan - Work Spotter')
+@section('header-title', 'Pusat Bantuan')
 
 @section('content')
 <div class="container-fluid px-3 py-2">
-    <div class="d-flex align-items-center mb-3">
-        <a href="{{ route('profile') }}" class="text-decoration-none text-dark me-3">
-            <i class="bx bx-left-arrow-alt fs-5"></i>
-        </a>
-        <h5 class="fw-bold mb-0">Pusat Bantuan</h5>
-    </div>
 
     <!-- Help Categories -->
     <div class="card border-0 shadow-sm mb-3">

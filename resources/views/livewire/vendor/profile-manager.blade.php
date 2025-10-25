@@ -59,24 +59,6 @@
                         @error('description') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
                     
-                    <div class="col-12">
-                        <label class="form-label fw-semibold">Alamat Bisnis *</label>
-                        <textarea class="form-control" rows="2" wire:model="address" placeholder="Alamat lengkap bisnis..."></textarea>
-                        @error('address') <span class="text-danger small">{{ $message }}</span> @enderror
-                    </div>
-                    
-                    <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold">Latitude</label>
-                        <input type="number" step="any" class="form-control" wire:model="latitude" placeholder="-7.1234567">
-                        @error('latitude') <span class="text-danger small">{{ $message }}</span> @enderror
-                    </div>
-                    
-                    <div class="col-12 col-md-6">
-                        <label class="form-label fw-semibold">Longitude</label>
-                        <input type="number" step="any" class="form-control" wire:model="longitude" placeholder="110.1234567">
-                        @error('longitude') <span class="text-danger small">{{ $message }}</span> @enderror
-                    </div>
-                    
                     <div class="col-12 col-md-6">
                         <label class="form-label fw-semibold">Tipe Vendor</label>
                         <select class="form-select" wire:model="type">

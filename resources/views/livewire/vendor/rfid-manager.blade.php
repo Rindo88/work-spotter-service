@@ -131,7 +131,7 @@
             <!-- Active Request -->
             @if($activeRequest)
             <div class="col-12">
-                <div class="card border-0 shadow-sm border-start border-4 border-warning">
+                <div class="card shadow-sm border-start border-4 border-warning">
                     <div class="card-body">
                         <div class="d-flex align-items-start mb-3">
                             <i class="bi bi-hourglass-split text-warning fs-4 me-3"></i>

@@ -18,6 +18,7 @@
                 </span>
             </p>
 
+
             <!-- Rating Display -->
             <div class="d-flex align-items-center justify-content-center mb-3">
                 <div class="rating-display me-2">
@@ -30,6 +31,15 @@
                     {{ number_format($vendor->rating_avg, 1) }} ({{ $vendor->reviews->count() }} ulasan)
                 </span>
             </div>
+
+            {{-- {-- Favorite Button - Posisi di kanan atas --}}
+            <button class="btn btn-sm favorite-btn position-absolute"
+                style="top: 15px; right: 15px; width: 32px; height: 32px; padding: 0; border-radius: 50%;"
+                data-vendor-id="{{ $vendor->id }}"
+                data-is-favorited="{{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'true' : 'false' }}">
+                <i
+                    class="bx {{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'bxs-heart text-danger' : 'bx-heart text-muted' }} fs-6"></i>
+            </button>
 
             <!-- Status Aktif -->
             @if ($vendor->type === 'informal' && $currentLocation && $currentLocation['is_active'])
@@ -592,6 +602,96 @@
                     }
                 });
             });
+        });
+
+
+
+
+
+        // Handle favorite button click
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoriteButtons = document.querySelectorAll('.favorite-btn');
+
+            favoriteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const vendorId = this.dataset.vendorId;
+                    const isFavorited = this.dataset.isFavorited === 'true';
+
+                    if (isFavorited) {
+                        unfavoriteVendor(vendorId, this);
+                    } else {
+                        favoriteVendor(vendorId, this);
+                    }
+                });
+            });
+
+            function favoriteVendor(vendorId, button) {
+                fetch(`/vendors/${vendorId}/favorite`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            // Update button state
+                            button.innerHTML = '<i class="bx bxs-heart"></i>';
+                            button.dataset.isFavorited = 'true';
+                            button.classList.remove('btn-outline-danger');
+                            button.classList.add('btn-danger');
+                            showToast(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('Terjadi kesalahan', 'error');
+                    });
+            }
+
+            function unfavoriteVendor(vendorId, button) {
+                if (!confirm('Hapus vendor dari favorit?')) return;
+
+                fetch(`/vendors/${vendorId}/unfavorite`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update button state
+                        button.innerHTML = '<i class="bx bx-heart"></i>';
+                        button.dataset.isFavorited = 'false';
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-outline-danger');
+                        showToast(data.message);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('Terjadi kesalahan', 'error');
+                    });
+            }
+
+            function showToast(message, type = 'success') {
+                // Simple toast notification
+                const toast = document.createElement('div');
+                toast.className = `position-fixed bottom-0 end-0 p-3`;
+                toast.innerHTML = `
+            <div class="toast show align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
         });
     </script>
 @endpush

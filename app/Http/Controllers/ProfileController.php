@@ -23,10 +23,6 @@ class ProfileController extends Controller
         return view('profile.security');
     }
 
-    public function favorites()
-    {
-        return view('profile.favorites');
-    }
 
     public function help()
     {

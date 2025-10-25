@@ -33,7 +33,6 @@ class Vendor extends Model
 
 
 
-
     public function unreadMessages()
     {
         return $this->hasMany(Chat::class)->where('sender_type', 'user')->unread();
@@ -64,7 +63,7 @@ class Vendor extends Model
     {
         return $this->rfidTags()->where('is_active', true)->exists();
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -128,5 +127,17 @@ class Vendor extends Model
         return $this->schedules()
             ->where('day', strtolower(now()->format('l')))
             ->first();
+    }
+
+    // Relasi favorites
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    // Count favoritesshow
+    public function getFavoritesCountAttribute()
+    {
+        return $this->favorites()->count();
     }
 }
