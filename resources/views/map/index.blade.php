@@ -4,5 +4,5 @@
 @section('header-title', 'Update Lokasi')
 
 @section('content')
-    <livewire:user.usermap />
+    <livewire:user.user-map />
 @endsection

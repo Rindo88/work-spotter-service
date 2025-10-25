@@ -14,6 +14,7 @@ use Livewire\Attributes\On;
 class UserMap extends Component
 {
     public $userLocation = null;
+    public $locationName = null;
     public $activeVendors = [];
     public $selectedVendor = null;
     public $isLoading = false;
@@ -31,6 +32,7 @@ class UserMap extends Component
         // Load userLocation dari session jika ada
         if (Session::has('user_last_location')) {
             $this->userLocation = Session::get('user_last_location');
+            $this->locationName = Session::get('user_location_name', null);
             $this->findActiveVendors();
         }
 
@@ -76,7 +78,11 @@ class UserMap extends Component
             'longitude' => $longitude
         ];
 
+        // Dapatkan nama lokasi menggunakan reverse geocoding
+        $this->locationName = $this->getLocationName($latitude, $longitude);
+
         Session::put('user_last_location', $this->userLocation);
+        Session::put('user_location_name', $this->locationName);
         $this->isLoading = false;
         $this->findActiveVendors();
     }
@@ -88,7 +94,11 @@ class UserMap extends Component
             'longitude' => $longitude
         ];
 
+        // Dapatkan nama lokasi menggunakan reverse geocoding
+        $this->locationName = $this->getLocationName($latitude, $longitude);
+
         Session::put('user_last_location', $this->userLocation);
+        Session::put('user_location_name', $this->locationName);
         $this->manualLatitude = $latitude;
         $this->manualLongitude = $longitude;
         $this->showManualInput = true;
@@ -112,7 +122,11 @@ class UserMap extends Component
             'longitude' => (float) $this->manualLongitude
         ];
 
+        // Dapatkan nama lokasi menggunakan reverse geocoding
+        $this->locationName = $this->getLocationName($this->userLocation['latitude'], $this->userLocation['longitude']);
+
         Session::put('user_last_location', $this->userLocation);
+        Session::put('user_location_name', $this->locationName);
         $this->showManualInput = false;
         $this->findActiveVendors();
 
@@ -259,6 +273,73 @@ class UserMap extends Component
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         return $earthRadius * $c;
+    }
+
+    private function getLocationName($latitude, $longitude)
+    {
+        try {
+            // Menggunakan Nominatim API dari OpenStreetMap untuk reverse geocoding
+            $url = "https://nominatim.openstreetmap.org/reverse?format=json&lat={$latitude}&lon={$longitude}&zoom=18&addressdetails=1";
+            
+            $context = stream_context_create([
+                'http' => [
+                    'method' => 'GET',
+                    'header' => [
+                        'User-Agent: WorkSpotter/1.0 (contact@workspotter.com)',
+                        'Accept: application/json'
+                    ],
+                    'timeout' => 10
+                ]
+            ]);
+
+            $response = file_get_contents($url, false, $context);
+            
+            if ($response === false) {
+                return 'Lokasi tidak diketahui';
+            }
+
+            $data = json_decode($response, true);
+            
+            if (!$data || !isset($data['display_name'])) {
+                return 'Lokasi tidak diketahui';
+            }
+
+            // Ambil nama yang lebih ringkas dari address components
+            $address = $data['address'] ?? [];
+            $locationParts = [];
+
+            // Prioritas: road, village, suburb, city_district, city, county
+            if (!empty($address['road'])) {
+                $locationParts[] = $address['road'];
+            }
+            
+            if (!empty($address['village'])) {
+                $locationParts[] = $address['village'];
+            } elseif (!empty($address['suburb'])) {
+                $locationParts[] = $address['suburb'];
+            } elseif (!empty($address['city_district'])) {
+                $locationParts[] = $address['city_district'];
+            }
+
+            if (!empty($address['city'])) {
+                $locationParts[] = $address['city'];
+            } elseif (!empty($address['county'])) {
+                $locationParts[] = $address['county'];
+            }
+
+            if (!empty($locationParts)) {
+                return implode(', ', array_slice($locationParts, 0, 3)); // Maksimal 3 komponen
+            }
+
+            // Fallback ke display_name yang dipotong
+            $displayName = $data['display_name'];
+            $parts = explode(', ', $displayName);
+            return implode(', ', array_slice($parts, 0, 3));
+
+        } catch (\Exception $e) {
+            Log::error('Error getting location name: ' . $e->getMessage());
+            return 'Lokasi tidak diketahui';
+        }
     }
 
     #[Computed]
