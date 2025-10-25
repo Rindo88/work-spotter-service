@@ -4,14 +4,14 @@
 
 /* CSS Variables - Global Design Tokens */
 :root {
-    /* Primary Colors */
-    --primary-color: #7fa19c;      /* sebelumnya #92B6B1 */
-    --primary-hover: #6c8d88;      /* sebelumnya #7fa19c */
-    --secondary-color: #5f7c78;    /* sebelumnya #6D8B87 */
-    --secondary-hover: #4d6c68;    /* sebelumnya #5a8d88 */
+    /* Primary Colors - Updated to match layout requirements */
+    --primary-color: #7fa19c; /* sebelumnya #92B6B1 */
+    --primary-hover: #6c8d88; /* sebelumnya #7fa19c */
+    --secondary-color: #5f7c78; /* sebelumnya #6D8B87 */
+    --secondary-hover: #4d6c68; /* sebelumnya #5a8d88 */
 
     /* Background Colors */
-    --background-color: #FFFFFF;
+    --background-color: #ffffff;
     --background-light: #f8f9fa;
     --background-gradient: #e9ecef;
 
@@ -22,7 +22,7 @@
     --text-white: #ffffff;
 
     /* Border & Shadow */
-    --border-color: #E0E0E0;
+    --border-color: #e0e0e0;
     --border-light: #dee2e6;
     --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
     --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.15);
@@ -49,7 +49,7 @@
    ======================================== */
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Work Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--background-light);
     color: var(--text-color);
     padding-bottom: var(--bottom-nav-height);
@@ -71,7 +71,11 @@ body.auth-page {
 
 /* For vendor registration */
 body.vendor-registration {
-    background: linear-gradient(135deg, var(--background-light) 0%, var(--background-gradient) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--background-light) 0%,
+        var(--background-gradient) 100%
+    );
     min-height: 100vh;
     padding: 20px;
 }
@@ -81,7 +85,7 @@ body.vendor-registration {
    ======================================== */
 
 .header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background-color: var(--primary-color);
     color: var(--text-white);
     position: fixed;
     top: 0;
@@ -89,13 +93,32 @@ body.vendor-registration {
     right: 0;
     z-index: 1000;
     height: var(--header-height);
-    transition: transform var(--transition-fast), opacity var(--transition-medium);
+    transition: transform var(--transition-fast),
+        opacity var(--transition-medium);
     will-change: transform;
 }
 
 .header.hidden {
     transform: translateY(-100%);
     opacity: 0;
+}
+
+/* Layout-specific header styles */
+.header.layout-header {
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+.header.layout-header h5 {
+    font-weight: 600;
+    margin: 0;
+}
+
+.header.layout-header a {
+    color: var(--text-white);
+    text-decoration: none;
 }
 
 .auth-header {
@@ -136,6 +159,26 @@ body.vendor-registration {
 
 .nav-item:hover {
     color: var(--primary-hover) !important;
+}
+
+/* Layout-specific bottom navigation */
+.bottom-nav.layout-nav {
+    background-color: var(--primary-color);
+    box-shadow: var(--shadow-light);
+    border-top: none;
+}
+
+.bottom-nav.layout-nav .nav-item {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.bottom-nav.layout-nav .nav-item.active {
+    color: var(--text-white) !important;
+    font-weight: 600;
+}
+
+.bottom-nav.layout-nav .nav-item:hover {
+    color: var(--text-white) !important;
 }
 
 /* Sidebar Navigation */
@@ -206,8 +249,8 @@ body.vendor-registration {
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background-color: var(--primary-hover) !important;
-    border-color: var(--primary-hover) !important;
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
     transform: translateY(-1px);
     box-shadow: var(--shadow-medium);
 }
@@ -317,6 +360,15 @@ body.vendor-registration {
     box-shadow: 0 0 0 0.25rem rgba(146, 182, 177, 0.25) !important;
 }
 
+/* Layout-specific form focus styles */
+.layout-app .form-control:focus,
+.layout-app .form-select:focus,
+.layout-livewire .form-control:focus,
+.layout-livewire .form-select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(146, 182, 177, 0.25) !important;
+}
+
 .form-label {
     font-weight: 500;
     margin-bottom: 8px;
@@ -340,7 +392,8 @@ body.vendor-registration {
    ======================================== */
 
 .card-hover {
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    transition: transform var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .card-hover:hover {
@@ -381,7 +434,11 @@ body.vendor-registration {
 .logo-placeholder {
     width: 100px;
     height: 100px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--primary-hover) 100%
+    );
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -399,7 +456,11 @@ body.vendor-registration {
     font-weight: 700;
     margin-bottom: 10px;
     color: var(--primary-color);
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-hover) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--secondary-hover) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -444,7 +505,11 @@ body.vendor-registration {
     top: 5px;
     bottom: 5px;
     width: calc(50% - 10px);
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--primary-hover) 100%
+    );
     border-radius: 20px;
     transition: all var(--transition-fast);
     z-index: 1;
@@ -470,7 +535,11 @@ body.vendor-registration {
 }
 
 .progress-bar {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--primary-hover) 100%
+    );
     border-radius: 5px;
     transition: width var(--transition-slow);
 }
@@ -576,6 +645,22 @@ body.vendor-registration {
     border-color: var(--primary-color) !important;
 }
 
+/* Layout-specific utility classes */
+.layout-app .text-primary,
+.layout-livewire .text-primary {
+    color: var(--primary-color) !important;
+}
+
+.layout-app .bg-primary,
+.layout-livewire .bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.layout-app .border-primary,
+.layout-livewire .border-primary {
+    border-color: var(--primary-color) !important;
+}
+
 .gradient-bg {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
@@ -600,7 +685,7 @@ body.vendor-registration {
    ======================================== */
 
 .welcome-page {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Work Sans", sans-serif;
     background-color: #ffffff;
     color: #333;
     margin: 0;
@@ -661,7 +746,7 @@ body.vendor-registration {
 }
 
 .welcome-btn-register {
-    background-color: #E8E8E8;
+    background-color: #e8e8e8;
     color: #333;
 }
 

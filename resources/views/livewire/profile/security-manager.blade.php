@@ -3,7 +3,7 @@
     <!-- Security Alerts -->
     @if($successMessage)
     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-        <i class="bi bi-check-circle me-2"></i>
+        <i class="bx bx-check-circle me-2"></i>
         {{ $successMessage }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -11,7 +11,7 @@
 
     @if($errorMessage)
     <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-        <i class="bi bi-exclamation-triangle me-2"></i>
+        <i class="bx bx-error me-2"></i>
         {{ $errorMessage }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -21,7 +21,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0 fw-bold">
-                <i class="bi bi-key me-2 text-primary"></i>
+                <i class="bx bx-key me-2 text-primary"></i>
                 Ubah Password
             </h5>
         </div>
@@ -51,7 +51,7 @@
                 
                 <div class="mt-4">
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-key me-2"></i>
+                        <i class="bx bx-key me-2"></i>
                         Ubah Password
                     </button>
                 </div>
@@ -63,7 +63,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0 fw-bold">
-                <i class="bi bi-laptop me-2 text-warning"></i>
+                <i class="bx bx-laptop me-2 text-warning"></i>
                 Manajemen Sesi
             </h5>
         </div>
@@ -83,7 +83,7 @@
                 
                 <div class="mt-3">
                     <button type="submit" class="btn btn-warning px-4">
-                        <i class="bi bi-phone me-2"></i>
+                        <i class="bx bx-mobile me-2"></i>
                         Keluar dari Perangkat Lain
                     </button>
                 </div>
@@ -95,7 +95,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white border-0 py-3">
             <h5 class="mb-0 fw-bold">
-                <i class="bi bi-box-arrow-right me-2 text-info"></i>
+                <i class="bx bx-log-out me-2 text-info"></i>
                 Tindakan Cepat
             </h5>
         </div>
@@ -104,7 +104,7 @@
                 <button type="button" class="btn btn-outline-primary" 
                         wire:click="logout" 
                         wire:confirm="Apakah Anda yakin ingin keluar?">
-                    <i class="bi bi-box-arrow-right me-2"></i>
+                    <i class="bx bx-log-out me-2"></i>
                     Keluar Sekarang
                 </button>
             </div>
@@ -115,7 +115,7 @@
     <div class="card border-0 shadow-sm border-danger">
         <div class="card-header bg-white border-danger py-3">
             <h5 class="mb-0 text-danger fw-bold">
-                <i class="bi bi-exclamation-triangle me-2"></i>
+                <i class="bx bx-error me-2"></i>
                 Zona Berbahaya
             </h5>
         </div>
@@ -140,7 +140,7 @@
                     <div class="mt-3">
                         <button type="button" class="btn btn-danger px-4" 
                                 onclick="confirmDelete()">
-                            <i class="bi bi-trash me-2"></i>
+                            <i class="bx bx-trash me-2"></i>
                             Hapus Akun Saya Permanent
                         </button>
                     </div>

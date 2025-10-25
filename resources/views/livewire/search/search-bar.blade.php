@@ -13,7 +13,7 @@
             class="btn position-absolute end-0 me-2 text-primary bg-transparent border-0"
             style="top: 50%; transform: translateY(-50%);"
         >
-            <i class="bi bi-search fs-5"></i>
+            <i class="bx bx-search fs-5"></i>
         </button>
     </div>
 

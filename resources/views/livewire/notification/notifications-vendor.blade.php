@@ -1,7 +1,7 @@
 <div class="position-relative" wire:poll.30s="loadNotifications" x-data="{ open: false }">
     <!-- Tombol Notifikasi -->
     <button @click="open = !open" class="btn btn-light rounded-circle position-relative">
-        <i class="bi bi-bell"></i>
+        <i class="bx bx-bell"></i>
         @if ($unreadCount > 0)
             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                 {{ $unreadCount }}

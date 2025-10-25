@@ -12,7 +12,7 @@
 
             <h5 class="fw-bold mb-1">{{ $vendor->business_name }}</h5>
             <p class="text-muted small mb-2">
-                <i class="bi bi-tag me-1"></i>{{ $vendor->category->name ?? 'Pedagang' }}
+                <i class="bx bx-tag me-1"></i>{{ $vendor->category->name ?? 'Pedagang' }}
                 <span class="badge bg-{{ $vendor->type === 'formal' ? 'primary' : 'success' }} ms-2">
                     {{ $vendor->type === 'formal' ? 'Toko Tetap' : 'Pedagang Keliling' }}
                 </span>
@@ -23,7 +23,7 @@
                 <div class="rating-display me-2">
                     @for ($i = 1; $i <= 5; $i++)
                         <i
-                            class="bi bi-star{{ $i <= floor($vendor->rating_avg) ? '-fill text-warning' : ($i <= $vendor->rating_avg ? '-half text-warning' : ' text-muted') }}"></i>
+                            class="bx bx-star{{ $i <= floor($vendor->rating_avg) ? 's text-warning' : ($i <= $vendor->rating_avg ? '-half text-warning' : ' text-muted') }}"></i>
                     @endfor
                 </div>
                 <span class="text-muted small">
@@ -34,32 +34,32 @@
             <!-- Status Aktif -->
             @if ($vendor->type === 'informal' && $currentLocation && $currentLocation['is_active'])
                 <div class="alert alert-success py-2 mb-3">
-                    <i class="bi bi-broadcast-pin me-1"></i>
+                    <i class="bx bx-broadcast me-1"></i>
                     <strong>Sedang Berjualan!</strong>
                     <small class="d-block">Aktif sejak {{ $currentLocation['checkin_time']->diffForHumans() }}</small>
                 </div>
             @elseif($vendor->type === 'informal')
                 <div class="alert alert-secondary py-2 mb-3">
-                    <i class="bi bi-eye-slash me-1"></i>
+                    <i class="bx bx-hide me-1"></i>
                     <strong>Sedang Tidak Berjualan</strong>
                 </div>
             @endif
 
             <div class="bg-light rounded-3 p-3 mb-3 text-start">
                 <h6 class="fw-bold text-primary mb-1">
-                    <i class="bi bi-info-circle me-1"></i>Deskripsi Usaha
+                    <i class="bx bx-info-circle me-1"></i>Deskripsi Usaha
                 </h6>
                 <p class="mb-0 small text-muted">{{ $vendor->description ?? 'Belum ada deskripsi.' }}</p>
             </div>
 
             <div class="d-flex gap-2">
                 <a href="{{ route('chat.room', $vendor->id) }}" class="btn btn-success flex-fill rounded-pill">
-                    <i class="bi bi-chat-dots me-1"></i> Chat
+                    <i class="bx bx-chat me-1"></i> Chat
                 </a>
                 @if ($currentLocation && $currentLocation['is_active'])
                     <a href="https://www.google.com/maps/dir/?api=1&destination={{ $currentLocation['latitude'] }},{{ $currentLocation['longitude'] }}"
                         target="_blank" class="btn btn-primary rounded-pill">
-                        <i class="bi bi-geo-alt me-1"></i> Navigasi
+                        <i class="bx bx-map me-1"></i> Navigasi
                     </a>
                 @endif
             </div>
@@ -70,19 +70,19 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="info-tab" data-bs-toggle="pill" data-bs-target="#info" type="button"
                     role="tab">
-                    <i class="bi bi-info-circle me-1"></i>Info
+                    <i class="bx bx-info-circle me-1"></i>Info
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="location-tab" data-bs-toggle="pill" data-bs-target="#location" type="button"
                     role="tab">
-                    <i class="bi bi-geo-alt me-1"></i>Lokasi
+                    <i class="bx bx-map me-1"></i>Lokasi
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="services-tab" data-bs-toggle="pill" data-bs-target="#services" type="button"
                     role="tab">
-                    <i class="bi bi-basket me-1"></i>Layanan
+                    <i class="bx bx-basket me-1"></i>Layanan
                 </button>
             </li>
         </ul>
@@ -94,16 +94,16 @@
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3 text-primary">
-                            <i class="bi bi-telephone me-1"></i>Informasi Kontak
+                            <i class="bx bx-phone me-1"></i>Informasi Kontak
                         </h6>
                         <div class="row small text-muted">
                             <div class="col-12 mb-2">
-                                <i class="bi bi-person me-2"></i>
+                                <i class="bx bx-user me-2"></i>
                                 <strong>Pemilik:</strong> {{ $vendor->user->name ?? 'Tidak diketahui' }}
                             </div>
                             @if ($vendor->phone)
                                 <div class="col-12 mb-2">
-                                    <i class="bi bi-telephone me-2"></i>
+                                    <i class="bx bx-phone me-2"></i>
                                     <strong>Telepon:</strong>
                                     <a href="tel:{{ $vendor->phone }}"
                                         class="text-decoration-none">{{ $vendor->phone }}</a>
@@ -111,7 +111,7 @@
                             @endif
                             @if ($vendor->type === 'formal' && $vendor->address)
                                 <div class="col-12">
-                                    <i class="bi bi-geo-alt me-2"></i>
+                                    <i class="bx bx-map me-2"></i>
                                     <strong>Alamat:</strong> {{ $vendor->address }}
                                 </div>
                             @endif
@@ -124,26 +124,26 @@
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3 text-primary">
-                            <i class="bi bi-info-circle me-1"></i>Informasi Usaha
+                            <i class="bx bx-info-circle me-1"></i>Informasi Usaha
                         </h6>
                         <div class="row small text-muted">
                             <div class="col-6 mb-2">
-                                <i class="bi bi-tag me-2"></i>
+                                <i class="bx bx-tag me-2"></i>
                                 <strong>Kategori:</strong><br>
                                 {{ $vendor->category->name ?? '-' }}
                             </div>
                             <div class="col-6 mb-2">
-                                <i class="bi bi-shop me-2"></i>
+                                <i class="bx bx-store me-2"></i>
                                 <strong>Tipe:</strong><br>
                                 {{ $vendor->type === 'formal' ? 'Toko Tetap' : 'Pedagang Keliling' }}
                             </div>
                             <div class="col-6">
-                                <i class="bi bi-star me-2"></i>
+                                <i class="bx bx-star me-2"></i>
                                 <strong>Rating:</strong><br>
                                 {{ number_format($vendor->rating_avg, 1) }}/5.0
                             </div>
                             <div class="col-6">
-                                <i class="bi bi-chat me-2"></i>
+                                <i class="bx bx-chat me-2"></i>
                                 <strong>Ulasan:</strong><br>
                                 {{ $vendor->reviews->count() }} ulasan
                             </div>
@@ -157,7 +157,7 @@
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3 text-primary">
-                            <i class="bi bi-clock me-1"></i>Jadwal Operasional
+                            <i class="bx bx-time me-1"></i>Jadwal Operasional
                         </h6>
                         <div class="schedule-list">
                             @php
@@ -212,7 +212,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3 text-primary">
-                            <i class="bi bi-star me-1"></i>Ulasan Pelanggan
+                            <i class="bx bx-star me-1"></i>Ulasan Pelanggan
                             <span class="badge bg-primary ms-2">{{ $vendor->reviews->count() }}</span>
                         </h6>
 
@@ -227,7 +227,7 @@
                                             @for ($i = 5; $i >= 1; $i--)
                                                 <input type="radio" name="rating" id="star{{ $i }}"
                                                     value="{{ $i }}" {{ old('rating') == $i ? 'checked' : '' }}>
-                                                <label for="star{{ $i }}"><i class="bi bi-star-fill"></i></label>
+                                                <label for="star{{ $i }}"><i class="bx bxs-star"></i></label>
                                             @endfor
                                         </div>
                                         @error('rating')
@@ -239,13 +239,13 @@
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror
                                     <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill">
-                                        <i class="bi bi-send me-1"></i>Kirim Review
+                                        <i class="bx bx-send me-1"></i>Kirim Review
                                     </button>
                                 </form>
                             </div>
                         @else
                             <div class="alert alert-info text-center py-2 mb-3">
-                                <i class="bi bi-info-circle me-1"></i>
+                                <i class="bx bx-info-circle me-1"></i>
                                 <a href="{{ route('login') }}" class="alert-link">Login</a> untuk menambahkan review
                             </div>
                         @endauth
@@ -265,7 +265,7 @@
                                         <div class="mb-2">
                                             @for ($i = 1; $i <= 5; $i++)
                                                 <i
-                                                    class="bi bi-star{{ $i <= $review->rating ? '-fill text-warning' : ' text-muted' }} small"></i>
+                                                    class="bx bx-star{{ $i <= $review->rating ? 's text-warning' : ' text-muted' }} small"></i>
                                             @endfor
                                         </div>
                                         <p class="small text-muted mb-0">{{ $review->comment }}</p>
@@ -274,7 +274,7 @@
                             </div>
                         @empty
                             <div class="text-center py-4">
-                                <i class="bi bi-chat-quote display-4 text-muted mb-3"></i>
+                                <i class="bx bx-chat display-4 text-muted mb-3"></i>
                                 <p class="text-muted small">Belum ada review untuk {{ $vendor->business_name }}</p>
                                 <small class="text-muted">Jadilah yang pertama memberikan ulasan!</small>
                             </div>
@@ -289,13 +289,13 @@
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3 text-primary">
-                            <i class="bi bi-geo-alt me-1"></i>Informasi Lokasi
+                            <i class="bx bx-map me-1"></i>Informasi Lokasi
                         </h6>
 
                         @if ($vendor->type === 'formal')
                             <!-- Pedagang Formal -->
                             <div class="d-flex align-items-start mb-2">
-                                <i class="bi bi-shop text-muted me-2 mt-1"></i>
+                                <i class="bx bx-store text-muted me-2 mt-1"></i>
                                 <div>
                                     <strong>Alamat Toko:</strong>
                                     <p class="mb-0 text-muted small">{{ $vendor->address ?? 'Alamat belum tersedia' }}</p>
@@ -305,20 +305,20 @@
                             <!-- Pedagang Informal -->
                             @if ($currentLocation && $currentLocation['is_active'])
                                 <div class="d-flex align-items-start mb-2">
-                                    <i class="bi bi-pin-map text-success me-2 mt-1"></i>
+                                    <i class="bx bx-map-pin text-success me-2 mt-1"></i>
                                     <div>
                                         <strong>Lokasi Saat Ini:</strong>
                                         <p class="mb-0 text-muted small">
                                             {{ $currentLocation['location_name'] ?? 'Lokasi aktif' }}</p>
                                         <small class="text-success">
-                                            <i class="bi bi-clock me-1"></i>
+                                            <i class="bx bx-time me-1"></i>
                                             Check-in: {{ $currentLocation['checkin_time']->format('H:i') }}
                                         </small>
                                     </div>
                                 </div>
                             @else
                                 <div class="d-flex align-items-start mb-2">
-                                    <i class="bi bi-geo text-muted me-2 mt-1"></i>
+                                    <i class="bx bx-map text-muted me-2 mt-1"></i>
                                     <div>
                                         <strong>Status:</strong>
                                         <p class="mb-0 text-muted small">Sedang tidak berjualan</p>
@@ -330,7 +330,7 @@
                         @endif
 
                         <div class="d-flex align-items-start">
-                            <i class="bi bi-info-circle text-muted me-2 mt-1"></i>
+                            <i class="bx bx-info-circle text-muted me-2 mt-1"></i>
                             <div>
                                 <strong>Tipe:</strong>
                                 <p class="mb-0 text-muted small">
@@ -348,7 +348,7 @@
 
                         @if ($vendor->type === 'informal' && (!$currentLocation || !$currentLocation['is_active']))
                             <div class="text-center py-5">
-                                <i class="bi bi-map display-4 text-muted"></i>
+                                <i class="bx bx-map display-4 text-muted"></i>
                                 <p class="text-muted small mt-2">Peta akan muncul saat pedagang melakukan check-in</p>
                             </div>
                         @endif
@@ -392,7 +392,7 @@
                     </div>
                 @else
                     <div class="text-center py-5">
-                        <i class="bi bi-basket display-4 text-muted mb-3"></i>
+                        <i class="bx bx-basket display-4 text-muted mb-3"></i>
                         <p class="text-muted">Belum ada layanan atau produk</p>
                         <small class="text-muted">Pedagang ini belum menambahkan layanan</small>
                     </div>
@@ -546,14 +546,14 @@
                         </span>
                         @if ($vendor->type === 'informal' && $currentLocation && $currentLocation['is_active'])
                             <small class="text-success">
-                                <i class="bi bi-check-circle me-1"></i>Aktif
+                                <i class="bx bx-check-circle me-1"></i>Aktif
                             </small>
                         @endif
                     </div>
                     <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
                        target="_blank" 
                        class="btn btn-primary btn-sm w-100">
-                        <i class="bi bi-geo-alt me-1"></i>Buka di Google Maps
+                        <i class="bx bx-map me-1"></i>Buka di Google Maps
                     </a>
                 </div>
             `;
@@ -574,7 +574,7 @@
                 // Tampilkan pesan jika map tidak bisa ditampilkan
                 document.getElementById('vendorMap').innerHTML = `
                 <div class="text-center text-muted py-5">
-                    <i class="bi bi-map display-4"></i>
+                    <i class="bx bx-map display-4"></i>
                     <p class="mt-3 mb-0">Lokasi tidak tersedia</p>
                     <small>Pedagang belum mengatur lokasi atau sedang tidak berjualan</small>
                 </div>
