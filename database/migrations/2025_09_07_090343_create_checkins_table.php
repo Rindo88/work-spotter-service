@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->string('location_name')->nullable();
-            $table->enum('status', ['checked_in', 'checked_out'])->default('checked_in');
+            $table->enum('status', ['checked_in', 'checked_out', 'auto_checked_out'])->default('checked_in');
             $table->tinyInteger('warning_stage')->default(0);
             $table->timestamps();
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use App\Notifications\NewUserRegisteredNotification;
 
 new #[Layout('layouts.auth', ['title' => 'Daftar'])] class extends Component {
     public string $name = '';
@@ -28,15 +29,19 @@ new #[Layout('layouts.auth', ['title' => 'Daftar'])] class extends Component {
 
         Auth::login($user);
 
+        // kirim email verifikasi
         if (config('mail.default') !== 'log') {
             try {
                 $user->sendEmailVerificationNotification();
             } catch (\Exception $e) {
-                // bisa diabaikan atau log error kalau mau
                 logger('Gagal kirim email verifikasi: ' . $e->getMessage());
             }
         }
 
+        // kirim notifikasi ke database
+        $user->notify(new NewUserRegisteredNotification($user->name));
+
+        // redirect seperti biasa
         $this->redirect(route('home', absolute: false), navigate: true);
     }
 
