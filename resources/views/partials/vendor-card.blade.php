@@ -7,7 +7,7 @@
             <p class="text-muted small mb-1 text-truncate">{{ $vendor->category->name ?? '-' }}</p>
             <div class="d-flex justify-content-between align-items-center small">
                 <span class="badge bg-success">
-                    <i class="bx bxs-star me-1"></i>{{ number_format($vendor->rating, 1) }}
+                    <i class="bx bxs-star me-1"></i>{{ number_format($vendor->rating_avg ?? 0, 1) }}
                 </span>
                 <span class="text-muted">
                     <i class="bx bx-map-pin me-1"></i>{{ $vendor->distance ?? '—' }} km
