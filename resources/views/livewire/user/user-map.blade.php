@@ -3,7 +3,7 @@
     <div class="card border-0 shadow-sm mb-3 bg-primary text-white">
         <div class="card-body">
             <h5 class="mb-3">
-                <i class="bi bi-map me-2"></i>
+                <i class="bx bx-map me-2"></i>
                 Cari Pedagang Terdekat
             </h5>
 
@@ -12,7 +12,7 @@
                 <div class="col-12 col-md-6">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white border-0">
-                            <i class="bi bi-search text-muted"></i>
+                            <i class="bx bx-search text-muted"></i>
                         </span>
                         <input type="text" class="form-control border-0" placeholder="Cari nama pedagang..."
                             wire:model.live="searchQuery">
@@ -41,16 +41,16 @@
     <!-- 2. PETA -->
     <div class="card border-0 shadow-sm mb-3">
         <div class="card-header bg-white border-0">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column flex-md-row flex-lg-row justify-content-between align-items-start align-items-lg-center">
                 <h6 class="mb-0">
-                    <i class="bi bi-map me-2 text-primary"></i>
+                    <i class="bx bx-map me-2 text-primary"></i>
                     Peta Lokasi Pedagang
                 </h6>
                 <small class="text-muted">Klik peta untuk pilih lokasi manual</small>
             </div>
         </div>
         <div class="card-body p-0 position-relative">
-            <div id="userMap" style="height: 400px; width: 100%; border-radius: 12px;" wire:ignore></div>
+            <div id="userMap" style="height: 400px; width: 100%;" wire:ignore></div>
 
             <!-- Search Box -->
             <div class="position-absolute top-0 start-0 m-3">
@@ -58,7 +58,7 @@
                     <input type="text" id="userSearchBox" class="form-control" placeholder="Cari lokasi..."
                         style="width: 200px;">
                     <button class="btn btn-primary" type="button" onclick="searchUserLocation()">
-                        <i class="bi bi-search"></i>
+                        <i class="bx bx-search"></i>
                     </button>
                 </div>
             </div>
@@ -67,11 +67,11 @@
             <div class="position-absolute bottom-0 end-0 m-3">
                 <div class="bg-white rounded shadow-sm p-2 small">
                     <div class="d-flex align-items-center mb-1">
-                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        <i class="bx bxs-map-pin text-primary me-2"></i>
                         <span>Lokasi Anda</span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-shop-fill text-success me-2"></i>
+                        <i class="bx bxs-store text-success me-2"></i>
                         <span>Pedagang Aktif</span>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
         <div class="card border-0 shadow-sm mb-3 border-primary">
             <div class="card-header bg-white border-0">
                 <h6 class="mb-0 text-primary">
-                    <i class="bi bi-geo-alt me-2"></i>Input Lokasi Manual
+                    <i class="bx bxs-map-pin me-2"></i>Input Lokasi Manual
                 </h6>
             </div>
             <div class="card-body">
@@ -102,10 +102,10 @@
                 </div>
                 <div class="mt-3 d-flex gap-2">
                     <button class="btn btn-primary flex-fill" wire:click="setLocationFromInput">
-                        <i class="bi bi-check-circle me-1"></i>Gunakan Lokasi Ini
+                        <i class="bx bx-check-circle me-1"></i>Gunakan Lokasi Ini
                     </button>
-                    <button class="btn btn-outline-secondary" wire:click="toggleManualInput">
-                        <i class="bi bi-x me-1"></i>Batal
+                    <button class="btn btn-outline-primary" wire:click="toggleManualInput">
+                        <i class="bx bx-x me-1"></i>Batal
                     </button>
                 </div>
             </div>
@@ -120,34 +120,35 @@
                 <div class="d-grid gap-2">
                     <button class="btn btn-primary btn-lg py-3" onclick="getUserLocation()" id="getUserLocationBtn"
                         {{ $isLoading ? 'disabled' : '' }}>
-                        <i class="bi bi-geo-alt me-2"></i>
                         <span>
                             @if ($isLoading)
-                                🔄 Mendeteksi Lokasi...
+                                <i class="bx bx-loader-alt me-1"></i>Mendeteksi Lokasi...
                             @else
-                                📍 Ambil Lokasi Saya
+                                <i class="bx bxs-map-pin me-1"></i>Ambil Lokasi Saya
                             @endif
                         </span>
                     </button>
                     <button class="btn btn-outline-primary" wire:click="toggleManualInput">
-                        <i class="bi bi-geo me-1"></i>Input Lokasi Manual
+                        <i class="bx bx-map me-1"></i>Input Lokasi Manual
                     </button>
                 </div>
             @else
                 <!-- Sudah ada lokasi -->
-                <div class="p-3 bg-info bg-opacity-10 rounded">
-                    <i class="bi bi-check-circle text-info me-2"></i>
-                    <span class="text-info fw-bold">Lokasi Aktif!</span>
-                    <p class="mb-2 small">
-                        {{ number_format($userLocation['latitude'], 6) }},
-                        {{ number_format($userLocation['longitude'], 6) }}
+                <div class="p-3 bg-primary-subtle bg-opacity-10 rounded">
+                    <i class="bx bx-check-circle text-primary me-2 align-middle"></i><span class="text-primary fw-bold">Lokasi Terdeteksi!</span>
+                    @if($locationName)
+                        <p class="mb-1 small fw-semibold text-dark">{{ $locationName }}</p>
+                    @endif
+                    <p class="mb-2 small text-muted">
+                        Latitude: {{ number_format($userLocation['latitude'], 6) }}<br>
+                        Longitude: {{ number_format($userLocation['longitude'], 6) }}
                     </p>
                     <div class="d-flex gap-2 justify-content-center">
                         <button class="btn btn-outline-primary btn-sm" onclick="getUserLocation()">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Ambil Ulang
+                            <i class="bx bx-refresh me-1"></i>Ambil Ulang
                         </button>
-                        <button class="btn btn-outline-secondary btn-sm" wire:click="toggleManualInput">
-                            <i class="bi bi-pencil me-1"></i>Edit Manual
+                        <button class="btn btn-primary btn-sm" wire:click="toggleManualInput">
+                            <i class="bx bx-pencil me-1"></i>Edit Manual
                         </button>
                     </div>
                 </div>
@@ -160,7 +161,7 @@
         <div class="card-header bg-white border-0">
             <div class="d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">
-                    <i class="bi bi-shop me-2 text-success"></i>
+                    <i class="bx bxs-store me-2 text-success"></i>
                     Pedagang Aktif
                     <span class="badge bg-success ms-2">{{ count($activeVendors) }}</span>
                 </h6>
@@ -174,30 +175,41 @@
                     @foreach ($activeVendors as $vendor)
                         @if ($vendor->checkin_time)
                             <div class="col-12">
-                                <div class="vendor-card p-3 border rounded hover-shadow {{ $selectedVendor && $selectedVendor->id == $vendor->id ? 'border-primary bg-primary bg-opacity-5' : '' }}"
+                                <div class="vendor-card p-2 p-sm-3 border rounded hover-shadow {{ $selectedVendor && $selectedVendor->id == $vendor->id ? 'border-primary bg-primary bg-opacity-5' : '' }}"
                                     wire:click="selectVendor({{ $vendor->id }})"
                                     style="cursor: pointer; transition: all 0.3s ease;">
-                                    <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2 gap-sm-3">
                                         <!-- Vendor Image -->
-                                        <img src="{{ $vendor->profile_picture ? asset('storage/' . $vendor->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode($vendor->business_name) . '&background=92B6B1&color=white&size=64' }}"
-                                            class="rounded-2" style="width: 60px; height: 60px; object-fit: cover;">
+                                        <div class="d-flex align-items-center gap-2 w-100 w-sm-auto">
+                                            <img src="{{ $vendor->profile_picture && !str_contains($vendor->profile_picture, 'http') ? asset('storage/' . $vendor->profile_picture) : 'https://ui-avatars.com/api/?name=' . urlencode($vendor->business_name) . '&background=92B6B1&color=white&size=64' }}"
+                                                class="rounded-2 flex-shrink-0" style="width: 50px; height: 50px; object-fit: cover;"
+                                                onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($vendor->business_name) }}&background=92B6B1&color=white&size=64'">
+
+                                            <!-- Mobile: Business name and distance inline with image -->
+                                            <div class="d-flex justify-content-between align-items-center w-100 d-sm-none">
+                                                <h6 class="fw-bold mb-0 text-truncate me-2">{{ $vendor->business_name }}</h6>
+                                                <span class="badge bg-light text-dark flex-shrink-0">
+                                                    <i class="bx bxs-map-pin me-1"></i>{{ number_format($vendor->distance, 1) }}km
+                                                </span>
+                                            </div>
+                                        </div>
 
                                         <!-- Vendor Info -->
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <h6 class="fw-bold mb-1">{{ $vendor->business_name }}</h6>
+                                        <div class="flex-grow-1 w-100 w-sm-auto">
+                                            <!-- Desktop: Business name and distance -->
+                                            <div class="d-none d-sm-flex justify-content-between align-items-start mb-1">
+                                                <h6 class="fw-bold mb-0">{{ $vendor->business_name }}</h6>
                                                 <span class="badge bg-light text-dark">
-                                                    <i
-                                                        class="bi bi-geo-alt me-1"></i>{{ number_format($vendor->distance, 1) }}
-                                                    km
+                                                    <i class="bx bxs-map-pin me-1"></i>{{ number_format($vendor->distance, 1) }}km
                                                 </span>
                                             </div>
 
-                                            <p class="text-muted small mb-2">{{ $vendor->description }}</p>
+                                            <p class="text-muted small mb-2 d-none d-sm-block">{{ $vendor->description }}</p>
+                                            <p class="text-muted small mb-2 d-sm-none" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $vendor->description }}</p>
 
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span class="badge bg-success">
-                                                    <i class="bi bi-clock me-1"></i>
+                                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                                                <span class="badge bg-light text-dark border border-secondary">
+                                                    <i class="bx bx-time me-1"></i>
                                                     Aktif
                                                     @if ($vendor->checkin_time)
                                                         {{ $vendor->checkin_time->diffForHumans() }}
@@ -205,16 +217,16 @@
                                                         Hari ini
                                                     @endif
                                                 </span>
-                                                <div class="d-flex gap-1">
-                                                    <button class="btn btn-outline-primary btn-sm"
+                                                <div class="d-flex gap-1 w-100 w-sm-auto">
+                                                    <button class="btn btn-outline-primary btn-sm flex-fill flex-sm-grow-0"
                                                         wire:click="startChatWithVendor({{ $vendor->id }})"
                                                         onclick="event.stopPropagation()">
-                                                        <i class="bi bi-chat me-1"></i>Chat
+                                                        <i class="bx bx-chat me-1"></i><span>Chat</span>
                                                     </button>
                                                     <a href="https://www.google.com/maps/dir/?api=1&destination={{ $vendor->latitude }},{{ $vendor->longitude }}"
-                                                        target="_blank" class="btn btn-success btn-sm"
+                                                        target="_blank" class="btn btn-primary btn-sm flex-fill flex-sm-grow-0"
                                                         onclick="event.stopPropagation()">
-                                                        <i class="bi bi-geo-alt me-1"></i>Maps
+                                                        <i class="bx bxs-map-pin me-1"></i><span>Maps</span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -228,7 +240,7 @@
             @else
                 <!-- Tidak ada pedagang -->
                 <div class="text-center py-5">
-                    <i class="bi bi-shop display-1 text-muted mb-3"></i>
+                    <i class="bx bxs-store display-1 text-muted mb-3"></i>
                     <h6 class="text-muted">Tidak ada pedagang aktif</h6>
                     <p class="text-muted small mb-0">
                         @if ($userLocation)
@@ -286,8 +298,8 @@
 @endpush
 
 @push('scripts')
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script>
         // Simple JavaScript tanpa Alpine.js
         let userMap;
@@ -335,10 +347,9 @@
 
             console.log('✅ User map initialized successfully');
 
-
             @if ($userLocation)
                 // setTimeout(() => {
-                    updateUserLocation(@json($userLocation), 'Lokasi Anda')
+                updateUserLocation(@json($userLocation), 'Lokasi Anda')
                 // }, 5000);
             @endif
         }
@@ -365,11 +376,11 @@
                 className: 'user-location-marker',
                 html: `
                 <div style="
-                    background-color: #007bff; 
-                    width: 24px; 
-                    height: 24px; 
-                    border-radius: 50%; 
-                    border: 4px solid white; 
+                    background-color: #007bff;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    border: 4px solid white;
                     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
                     position: relative;
                 ">
@@ -441,11 +452,11 @@
                 className: 'vendor-location-marker',
                 html: `
                 <div style="
-                    background-color: #28a745; 
-                    width: 20px; 
-                    height: 20px; 
-                    border-radius: 50% 50% 50% 0; 
-                    border: 3px solid white; 
+                    background-color: #28a745;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50% 50% 50% 0;
+                    border: 3px solid white;
                     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
                     transform: rotate(-45deg);
                     position: relative;
@@ -478,11 +489,11 @@
                 className: 'vendor-location-marker',
                 html: `
                 <div style="
-                    background-color: #28a745; 
-                    width: 20px; 
-                    height: 20px; 
-                    border-radius: 50% 50% 50% 0; 
-                    border: 3px solid white; 
+                    background-color: #28a745;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50% 50% 50% 0;
+                    border: 3px solid white;
                     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
                     transform: rotate(-45deg);
                     position: relative;
@@ -512,21 +523,21 @@
                 <p class="small mb-2 text-muted">${vendor.description}</p>
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="badge bg-success">
-                        <i class="bi bi-clock me-1"></i>Aktif
+                        <i class="bx bx-time me-1"></i>Aktif
                     </span>
                     <span class="badge bg-light text-dark">
                         ${vendor.distance ? vendor.distance.toFixed(1) : '0'} km
                     </span>
                 </div>
                 <div class="d-flex gap-1">
-                    <button class="btn btn-primary btn-sm flex-fill" 
+                    <button class="btn btn-primary btn-sm flex-fill"
                             onclick="window.Livewire.dispatch('select-vendor', {vendorId: ${vendor.id}})">
-                        <i class="bi bi-eye me-1"></i>Lihat
+                        <i class="bx bx-show me-1"></i>Lihat
                     </button>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${vendor.latitude},${vendor.longitude}" 
-                       target="_blank" 
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${vendor.latitude},${vendor.longitude}"
+                       target="_blank"
                        class="btn btn-success btn-sm">
-                        <i class="bi bi-geo-alt me-1"></i>Google Maps
+                        <i class="bx bxs-map-pin me-1"></i>Google Maps
                     </a>
                 </div>
             </div>
@@ -546,7 +557,7 @@
             const btn = document.getElementById('getUserLocationBtn');
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '<i class="bi bi-geo-alt me-2"></i>🔄 Mendeteksi Lokasi...';
+                btn.innerHTML = '<i class="bx bx-loader-alt me-1"></i>Mendeteksi Lokasi...';
             }
 
             navigator.geolocation.getCurrentPosition(
@@ -560,7 +571,7 @@
 
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-geo-alt me-2"></i>📍 Ambil Lokasi Saya';
+                        btn.innerHTML = '<i class="bx bxs-map-pin me-2"></i>Ambil Lokasi Saya';
                     }
                 },
                 (error) => {
@@ -583,7 +594,7 @@
 
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-geo-alt me-2"></i>📍 Ambil Lokasi Saya';
+                        btn.innerHTML = '<i class="bx bxs-map-pin me-2"></i>📍 Ambil Lokasi Saya';
                     }
                 }, {
                     enableHighAccuracy: true,
