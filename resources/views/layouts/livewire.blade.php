@@ -11,7 +11,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<<<<<<< HEAD
 
     <style>
         :root {
@@ -118,51 +117,21 @@
             box-shadow: 0 0 0 0.25rem rgba(146, 182, 177, 0.25) !important;
         }
     </style>
-=======
-    <!-- Unified CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
->>>>>>> 8bd7278e98a29c51b67146ea89d412504ceb421f
 
     @livewireStyles
     @stack('styles')
 </head>
 
-<<<<<<< HEAD
 <body>
     <!-- Header Baru -->
     <header class="header">
         <div class="d-flex align-items-center w-100">
-            <a href="javascript:history.back()" class="me-3">
-                <i class="bi bi-arrow-left fs-5"></i>
-            </a>
-            <h5 class="fw-bold mb-0">@yield('header-title', 'Work Spotter')</h5>
-=======
-<body class="with-header">
-    <!-- Header -->
-    <header class="header" id="main-header">
-        <div class="d-flex align-items-center h-100 px-3">
-            @if (!request()->is('/'))
-                <a href="javascript:history.back()" class="text-white text-decoration-none">
+            @if (!request()->routeIs('home'))
+                <a href="javascript:history.back()" class="me-3">
                     <i class="bi bi-arrow-left fs-5"></i>
                 </a>
-            @else
-                <div style="width: 24px;"></div>
             @endif
-
-            <!-- Logo di tengah -->
-            <div class="flex-grow-1 text-center">
-                <img src="{{ asset('assets/images/logo-workspotter.png') }}" alt="Work Spotter Logo" class="img-fluid"
-                    style="max-height: 48px; height: auto;">
-            </div>
-
-            @if (!request()->is('/'))
-                <a href="#" class="text-white text-decoration-none">
-                    <i class="bi bi-three-dots-vertical fs-5"></i>
-                </a>
-            @else
-                <div style="width: 24px;"></div>
-            @endif
->>>>>>> 8bd7278e98a29c51b67146ea89d412504ceb421f
+            <h5 class="fw-bold mb-0">@yield('header-title', 'Work Spotter')</h5>
         </div>
     </header>
 
