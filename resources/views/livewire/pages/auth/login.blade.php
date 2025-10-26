@@ -51,17 +51,39 @@ class extends Component
 
         <div class="mb-2">
             <label class="form-label fw-semibold text-dark small">Password</label>
-            <input
-                wire:model="form.password"
-                type="password"
-                class="form-control form-control-sm"
-                placeholder="Masukkan password anda"
-                required
-            >
+            <div class="position-relative">
+                <input
+                    wire:model="form.password"
+                    type="password"
+                    id="password"
+                    class="form-control form-control-sm"
+                    placeholder="Masukkan password anda"
+                    required
+                >
+                <button type="button" onclick="togglePassword()" class="btn btn-sm position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent">
+                    <i id="toggleIcon" class='bx bx-show'></i>
+                </button>
+            </div>
             @error('form.password') 
                 <div class="text-danger small mt-1">{{ $message }}</div> 
             @enderror
         </div>
+
+        <script>
+            function togglePassword() {
+                const input = document.getElementById('password');
+                const icon = document.getElementById('toggleIcon');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bx-show');
+                    icon.classList.add('bx-hide');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bx-hide');
+                    icon.classList.add('bx-show');
+                }
+            }
+        </script>
 
         <div class="d-flex justify-content-end mb-4">
             <a href="{{ route('password.request') }}" wire:navigate class="text-decoration-none text-primary small">
@@ -75,8 +97,6 @@ class extends Component
     </form>
 
     <div class="text-center mt-3">
-        <a href="{{ route('register') }}" wire:navigate class="text-decoration-none small" style="color:#92B6B1">
-            Belum punya akun? Daftar disini
-        </a>
+        Belum punya akun? <a href="{{ route('register') }}" wire:navigate class="text-decoration-none" style="color:#92B6B1">Daftar disini</a>
     </div>
 </div>
