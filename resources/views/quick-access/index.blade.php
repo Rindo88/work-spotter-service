@@ -8,9 +8,6 @@
             <h4 class="mb-1 fw-bold">{{ $title }}</h4>
             <p class="text-muted mb-0 small">{{ $description }}</p>
         </div>
-        <a href="{{ route('home') }}" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>Kembali
-        </a>
     </div>
 
     <!-- Filter Tabs -->
@@ -25,6 +22,10 @@
                    class="btn {{ $type == 'informal' ? 'btn-primary' : 'btn-outline-secondary' }} btn-sm rounded-pill px-3">
                     Pedagang Informal
                 </a>
+                <a href="{{ route('quick-access.index', ['type' => 'formal']) }}" 
+                   class="btn {{ $type == 'formal' ? 'btn-primary' : 'btn-outline-secondary' }} btn-sm rounded-pill px-3">
+                    Pedagang Formal
+                </a>
                 <a href="{{ route('quick-access.index', ['type' => 'top-rated']) }}" 
                    class="btn {{ $type == 'top-rated' ? 'btn-primary' : 'btn-outline-secondary' }} btn-sm rounded-pill px-3">
                     Rating Tertinggi
@@ -33,9 +34,9 @@
                    class="btn {{ $type == 'nearby' ? 'btn-primary' : 'btn-outline-secondary' }} btn-sm rounded-pill px-3">
                     Terdekat
                 </a>
-                <a href="{{ route('quick-access.index', ['type' => 'promo']) }}" 
-                   class="btn {{ $type == 'promo' ? 'btn-primary' : 'btn-outline-secondary' }} btn-sm rounded-pill px-3">
-                    Promo
+                <a href="{{ route('quick-access.index', ['type' => 'favorite']) }}" 
+                   class="btn {{ $type == 'favorite' ? 'btn-primary' : 'btn-outline-secondary' }} btn-sm rounded-pill px-3">
+                    Favorit
                 </a>
             </div>
         </div>

@@ -1,4 +1,5 @@
-<div class="w-100">
+<div class="w-100 position-relative">
+    <!-- Search bar -->
     <div class="d-flex align-items-center position-relative">
         <input 
             wire:model.live.debounce.300ms="query" 
@@ -17,26 +18,34 @@
         </button>
     </div>
 
+    <!-- Suggestions dropdown -->
     @if($showSuggestions && (count($vendors) > 0 || count($services) > 0))
-    <div class="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg border">
+    <div class="position-absolute w-100 mt-1 bg-white rounded shadow border" style="z-index: 1050;">
+        
+        {{-- Vendor Section --}}
         @if(count($vendors) > 0)
         <div class="p-2">
-            <h3 class="text-sm font-semibold text-gray-700 mb-1">Vendor</h3>
-            <ul>
+            <h3 class="small fw-semibold text-secondary mb-1">Vendor</h3>
+            <ul class="list-unstyled mb-0">
                 @foreach($vendors as $vendor)
                 <li>
-                    <a href="{{ route('vendor.show', $vendor->id) }}" class="block px-3 py-2 hover:bg-gray-100 rounded">
-                        <div class="flex items-center">
+                    <a href="{{ route('vendor.show', $vendor->id) }}" 
+                       class="d-block px-3 py-2 text-decoration-none text-dark rounded hover-bg-light">
+                        <div class="d-flex align-items-center">
                             @if($vendor->profile_picture)
-                            <img src="{{ $vendor->profile_picture }}" alt="{{ $vendor->business_name }}" class="w-8 h-8 rounded-full mr-2">
+                            <img src="{{ $vendor->profile_picture }}" 
+                                 alt="{{ $vendor->business_name }}" 
+                                 class="rounded-circle me-2" 
+                                 style="width: 32px; height: 32px; object-fit: cover;">
                             @else
-                            <div class="w-8 h-8 rounded-full bg-gray-200 mr-2 flex items-center justify-center">
-                                <span class="text-gray-500 text-xs">{{ substr($vendor->business_name, 0, 1) }}</span>
+                            <div class="rounded-circle bg-light me-2 d-flex align-items-center justify-content-center" 
+                                 style="width: 32px; height: 32px;">
+                                <span class="text-muted small">{{ substr($vendor->business_name, 0, 1) }}</span>
                             </div>
                             @endif
                             <div>
-                                <p class="text-sm font-medium">{{ $vendor->business_name }}</p>
-                                <p class="text-xs text-gray-500">{{ $vendor->category->name }}</p>
+                                <p class="mb-0 small fw-semibold">{{ $vendor->business_name }}</p>
+                                <p class="mb-0 text-muted small">{{ $vendor->category->name }}</p>
                             </div>
                         </div>
                     </a>
@@ -46,24 +55,30 @@
         </div>
         @endif
 
+        {{-- Services Section --}}
         @if(count($services) > 0)
-        <div class="p-2 {{ count($vendors) > 0 ? 'border-t' : '' }}">
-            <h3 class="text-sm font-semibold text-gray-700 mb-1">Layanan</h3>
-            <ul>
+        <div class="p-2 @if(count($vendors) > 0) border-top @endif">
+            <h3 class="small fw-semibold text-secondary mb-1">Layanan</h3>
+            <ul class="list-unstyled mb-0">
                 @foreach($services as $service)
                 <li>
-                    <a href="{{ route('vendor.show', $service->vendor_id) }}" class="block px-3 py-2 hover:bg-gray-100 rounded">
-                        <div class="flex items-center">
+                    <a href="{{ route('vendor.show', $service->vendor_id) }}" 
+                       class="d-block px-3 py-2 text-decoration-none text-dark rounded hover-bg-light">
+                        <div class="d-flex align-items-center">
                             @if($service->image_url)
-                            <img src="{{ $service->image_url }}" alt="{{ $service->name }}" class="w-8 h-8 rounded mr-2 object-cover">
+                            <img src="{{ $service->image_url }}" 
+                                 alt="{{ $service->name }}" 
+                                 class="rounded me-2" 
+                                 style="width: 32px; height: 32px; object-fit: cover;">
                             @else
-                            <div class="w-8 h-8 rounded bg-gray-200 mr-2 flex items-center justify-center">
-                                <span class="text-gray-500 text-xs">S</span>
+                            <div class="rounded bg-light me-2 d-flex align-items-center justify-content-center" 
+                                 style="width: 32px; height: 32px;">
+                                <span class="text-muted small">S</span>
                             </div>
                             @endif
                             <div>
-                                <p class="text-sm font-medium">{{ $service->name }}</p>
-                                <p class="text-xs text-gray-500">{{ $service->vendor->business_name }}</p>
+                                <p class="mb-0 small fw-semibold">{{ $service->name }}</p>
+                                <p class="mb-0 text-muted small">{{ $service->vendor->business_name }}</p>
                             </div>
                         </div>
                     </a>
@@ -75,3 +90,12 @@
     </div>
     @endif
 </div>
+
+@push('styles')
+<style>
+/* efek hover pada hasil pencarian */
+.hover-bg-light:hover {
+    background-color: #f8f9fa;
+}
+</style>
+@endpush

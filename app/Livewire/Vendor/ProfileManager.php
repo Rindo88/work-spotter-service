@@ -15,9 +15,6 @@ class ProfileManager extends Component
     public $business_name;
     public $description;
     public $category_id;
-    public $address;
-    public $latitude;
-    public $longitude;
     public $profile_picture;
     public $operational_notes;
     public $type = 'informal';
@@ -33,9 +30,6 @@ class ProfileManager extends Component
             $this->business_name = $vendor->business_name;
             $this->description = $vendor->description;
             $this->category_id = $vendor->category_id;
-            $this->address = $vendor->address;
-            $this->latitude = $vendor->latitude;
-            $this->longitude = $vendor->longitude;
             $this->operational_notes = $vendor->operational_notes;
             $this->type = $vendor->type;
             $this->is_rfid = $vendor->is_rfid;
@@ -55,7 +49,6 @@ class ProfileManager extends Component
             'business_name' => 'required|string|max:255',
             'description' => 'required|string|min:10',
             'category_id' => 'required|exists:categories,id',
-            'address' => 'required|string|min:10',
             'profile_picture' => 'nullable|image|max:2048',
             'operational_notes' => 'nullable|string|max:500',
         ]);
@@ -71,9 +64,6 @@ class ProfileManager extends Component
             'business_name' => $this->business_name,
             'description' => $this->description,
             'category_id' => $this->category_id,
-            'address' => $this->address,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
             'operational_notes' => $this->operational_notes,
             'type' => $this->type,
             'is_rfid' => $this->is_rfid,

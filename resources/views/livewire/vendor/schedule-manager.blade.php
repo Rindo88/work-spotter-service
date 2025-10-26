@@ -15,35 +15,46 @@
 
             <form wire:submit="saveSchedules">
                 @foreach($days as $key => $day)
-                <div class="border-bottom pb-3 mb-3">
-                    <div class="row align-items-center">
-                        <div class="col-4">
-                            <label class="form-label fw-semibold">{{ $day }}</label>
+                <div class="pb-3 mb-3 border-bottom">
+                    <div class="row g-2 align-items-center">
+                        <!-- Label hari full-width di mobile -->
+                        <div class="col-12 col-md-4">
+                            <label class="form-label fw-semibold mb-1">{{ $day }}</label>
                         </div>
-                        <div class="col-3">
+                        <!-- Switch tutup -->
+                        <div class="col-6 col-md-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" 
                                        wire:model="schedules.{{ $key }}.is_closed"
-                                       wire:click="toggleDayClosed('{{ $key }}')">
+                                       wire:change="handleDayClosed('{{ $key }}')">
                                 <label class="form-check-label small">Tutup</label>
                             </div>
                         </div>
-                        <div class="col-2">
-                            <input type="time" class="form-control form-control-sm" 
+                        <!-- Jam buka -->
+                        <div class="col-6 col-md-2">
+                            <input type="time" class="form-control form-control-sm w-100" 
                                    wire:model="schedules.{{ $key }}.open_time"
                                    {{ $schedules[$key]['is_closed'] ? 'disabled' : '' }}>
                         </div>
-                        <div class="col-2">
-                            <input type="time" class="form-control form-control-sm"
+                        <!-- Jam tutup -->
+                        <div class="col-6 col-md-2">
+                            <input type="time" class="form-control form-control-sm w-100"
                                    wire:model="schedules.{{ $key }}.close_time"
                                    {{ $schedules[$key]['is_closed'] ? 'disabled' : '' }}>
                         </div>
-                        <div class="col-1 text-center">
+                        <!-- Status badge -->
+                        <div class="col-6 col-md-1 text-start text-md-center mt-1 mt-md-0">
                             @if($schedules[$key]['is_closed'])
                                 <span class="badge bg-danger small">Tutup</span>
                             @else
                                 <span class="badge bg-success small">Buka</span>
                             @endif
+                        </div>
+                        <!-- Catatan per hari (opsional) -->
+                        <div class="col-12 mt-2">
+                            <input type="text" class="form-control form-control-sm" 
+                                   placeholder="Catatan (opsional)"
+                                   wire:model="schedules.{{ $key }}.notes">
                         </div>
                     </div>
                 </div>
@@ -86,21 +97,21 @@
 <script>
 // Tambahkan method untuk set all open/closed di component
 // app/Livewire/Vendor/ScheduleManager.php
-// public function setAllOpen()
-// {
-//     foreach ($this->days as $key => $day) {
-//         $this->schedules[$key]['is_closed'] = false;
-//         $this->schedules[$key]['open_time'] = '08:00';
-//         $this->schedules[$key]['close_time'] = '17:00';
-//     }
-// }
+public function setAllOpen()
+{
+    foreach ($this->days as $key => $day) {
+        $this->schedules[$key]['is_closed'] = false;
+        $this->schedules[$key]['open_time'] = '08:00';
+        $this->schedules[$key]['close_time'] = '17:00';
+    }
+}
 
-// public function setAllClosed()
-// {
-//     foreach ($this->days as $key => $day) {
-//         $this->schedules[$key]['is_closed'] = true;
-//         $this->schedules[$key]['open_time'] = '';
-//         $this->schedules[$key]['close_time'] = '';
-//     }
-// }
+public function setAllClosed()
+{
+    foreach ($this->days as $key => $day) {
+        $this->schedules[$key]['is_closed'] = true;
+        $this->schedules[$key]['open_time'] = '';
+        $this->schedules[$key]['close_time'] = '';
+    }
+}
 </script>

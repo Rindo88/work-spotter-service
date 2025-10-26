@@ -17,7 +17,7 @@
                 </div>
 
                 <!-- Notification Icon -->
-                @livewire('notification.notifications-vendor')
+                @livewire('notification.notifications-user')
             </div>
         </div>
     </div>
@@ -65,7 +65,7 @@
                         ['icon' => 'bx-cart', 'color' => 'var(--primary-color)', 'title' => 'Pedagang Informal', 'desc' => 'Kaki lima & UMKM', 'type' => 'informal'],
                         ['icon' => 'bxs-star', 'color' => 'var(--primary-color)', 'title' => 'Rating Tertinggi', 'desc' => 'Terbaik & Terpercaya', 'type' => 'top-rated'],
                         ['icon' => 'bxs-map', 'color' => 'var(--primary-color)', 'title' => 'Lokasi Terdekat', 'desc' => 'Ditempat Anda', 'type' => 'nearby'],
-                        ['icon' => 'bxs-offer', 'color' => 'var(--primary-color)', 'title' => 'Promo Spesial', 'desc' => 'Diskon & Penawaran', 'type' => 'promo'],
+                        ['icon' => 'bxs-heart', 'color' => 'var(--primary-color)', 'title' => 'Paling Favorit', 'desc' => 'Banyak Disukai', 'type' => 'favorite'],
                     ];
                 @endphp
                 @foreach ($quickAccess as $index => $item)

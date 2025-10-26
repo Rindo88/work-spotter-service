@@ -4,7 +4,6 @@ namespace App\Livewire\User;
 
 use Livewire\Component;
 use App\Models\Checkin;
-use App\Models\Vendor;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;

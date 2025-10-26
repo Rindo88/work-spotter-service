@@ -5,7 +5,7 @@
         <i class="bi bi-check-circle me-2"></i>
         {{ $successMessage }}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>nd
+    </div>
     @endif
 
     <div class="card border-0 shadow-sm mb-3">
@@ -19,7 +19,7 @@
                              style="width: 80px; height: 80px; object-fit: cover;" 
                              id="profileImagePreview">
                         <label for="profile_picture" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-1" style="cursor: pointer;">
-                            <i class="bi bi-camera fs-6"></i>
+                            <i class="bx bx-camera"></i>
                         </label>
                     </div>
                     <input type="file" id="profile_picture" wire:model="profile_picture" class="d-none" accept="image/*">

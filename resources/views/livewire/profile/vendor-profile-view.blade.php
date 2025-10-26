@@ -69,13 +69,28 @@
                 </div>
                 <i class="bx bx-chevron-right text-muted"></i>
             </a>
+            
+            <!-- Location Manager -->
+            <a href="{{ route('vendor.location') }}"
+                class="d-flex justify-content-between align-items-center p-3 border-bottom text-decoration-none text-dark">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                        <i class="bx bx-location-plus text-success"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-semibold">Lokasi</h6>
+                        <small class="text-muted">Informasi alamat & lokasi</small>
+                    </div>
+                </div>
+                <i class="bx bx-chevron-right text-muted"></i>
+            </a>
 
             <!-- Services -->
             <a href="{{ route('vendor.services') }}"
                 class="d-flex justify-content-between align-items-center p-3 border-bottom text-decoration-none text-dark">
                 <div class="d-flex align-items-center">
                     <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
-                        <i class="bx bx-list-check text-primary"></i>
+                        <i class="bx bx-pickup-truck text-primary"></i>
                     </div>
                     <div>
                         <h6 class="mb-0 fw-semibold">Layanan</h6>
@@ -109,7 +124,7 @@
                     </div>
                     <div>
                         <h6 class="mb-0 fw-semibold">Kartu RFID</h6>
-                        <small class="text-muted">Kelola kartu pembayaran</small>
+                        <small class="text-muted">Kelola kartu Check-in</small>
                     </div>
                 </div>
                 <i class="bx bx-chevron-right text-muted"></i>

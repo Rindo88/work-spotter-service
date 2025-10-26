@@ -45,6 +45,7 @@
 
         @forelse ($notifications as $notif)
             @php $data = $notif->data; @endphp
+            <a href="{{ route('notifications.detail', $notif->id) }}" class="text-decoration-none">
             <div class="px-3 py-2 border-bottom small {{ $notif->read_at ? 'bg-light' : 'bg-white' }}"
                 wire:click="markAsRead('{{ $notif->id }}')">
                 <div class="fw-semibold text-dark">{{ $data['title'] ?? 'Pemberitahuan' }}</div>
@@ -53,6 +54,7 @@
                     {{ \Carbon\Carbon::parse($notif->created_at)->diffForHumans() }}
                 </div>
             </div>
+            </a>
         @empty
             <div class="p-3 text-center text-muted small">Belum ada notifikasi</div>
         @endforelse

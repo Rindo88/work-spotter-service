@@ -128,5 +128,38 @@ class User extends Authenticatable
     public function chats()
     {
         return $this->hasMany(Chat::class);
+       // Relasi favorites
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    // Favorit vendor saja
+    public function vendorFavorites()
+    {
+        return $this->favorites()->vendorFavorites()->with('vendor');
+    }
+
+    // Favorit service saja
+    public function serviceFavorites()
+    {
+        return $this->favorites()->serviceFavorites()->with('service.vendor');
+    }
+
+    // Check jika vendor sudah difavoritkan
+    public function hasFavoritedVendor($vendorId)
+    {
+        return $this->favorites()
+            ->where('vendor_id', $vendorId)
+            ->whereNull('service_id')
+            ->exists();
+    }
+
+    // Check jika service sudah difavoritkan
+    public function hasFavoritedService($serviceId)
+    {
+        return $this->favorites()
+            ->where('service_id', $serviceId)
+            ->exists();
     }
 }
