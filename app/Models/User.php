@@ -2,29 +2,62 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens;
 
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'phone',
-        'profile_picture',
-        'role'
+        'role',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -33,85 +66,68 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-
-
-    public function chats()
-    {
-        return $this->hasMany(Chat::class);
-    }
-
-    public function unreadMessages()
-    {
-        return $this->hasMany(Chat::class)->where('sender_type', 'vendor')->unread();
-    }
-
-    public function latestMessageWithVendor($vendorId = null)
-    {
-        $query = $this->hasOne(Chat::class)->latest();
-
-        if ($vendorId) {
-            $query->where('vendor_id', $vendorId);
-        }
-
-        return $query;
-    }
-
-    // Relasi ke model Vendor (table vendors)
-    public function vendor()
-    {
-        return $this->hasOne(Vendor::class);
-    }
-
-    // Cek apakah user punya vendor profile
-    public function hasVendorProfile()
-    {
-        return $this->vendor !== null;
-    }
-
-    // Cek apakah vendor sudah aktif (checkin)
-    public function isVendorActive()
-    {
-        if (!$this->isVendor()) return false;
-
-        return \App\Models\Checkin::where('user_id', $this->id)
-            ->where('status', 'checked_in')
-            ->whereDate('checkin_time', today())
-            ->exists();
-    }
-
-    // Get current active checkin
-    public function currentCheckin()
-    {
-        if (!$this->isVendor()) return null;
-
-        return \App\Models\Checkin::where('user_id', $this->id)
-            ->where('status', 'checked_in')
-            ->with('vendor')
-            ->first();
-    }
-
-
-    // Method sederhana untuk cek vendor
-    public function getHasVendorAttribute()
-    {
-        return $this->vendor !== null;
-    }
-
+    /**
+     * Check if user is admin
+     */
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    public function isVendor(): bool
-    {
-        return $this->role === 'vendor' && $this->hasVendorProfile();
-    }
-
+    /**
+     * Check if user is regular user
+     */
     public function isUser(): bool
     {
         return $this->role === 'user';
     }
 
+    /**
+     * Scope to get only admin users
+     */
+    public function scopeAdmins($query)
+    {
+        return $query->where('role', 'admin');
+    }
+
+    /**
+     * Scope to get only regular users
+     */
+    public function scopeUsers($query)
+    {
+        return $query->where('role', 'user');
+    }
+
+    /**
+     * Get the vendor associated with the user
+     */
+    public function vendor()
+    {
+        return $this->hasOne(Vendor::class);
+    }
+
+    /**
+     * Get the reviews written by the user
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the checkins made by the user
+     */
+    public function checkins()
+    {
+        return $this->hasMany(Checkin::class);
+    }
+
+    /**
+     * Get the chats where the user is involved
+     */
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
        // Relasi favorites
     public function favorites()
     {
