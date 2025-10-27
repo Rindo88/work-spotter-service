@@ -72,6 +72,7 @@
                 @enderror
             </div>
 
+
             <div class="mb-3">
                 <label class="form-label required-field">Jenis Usaha</label>
                 <select class="form-select" wire:model="category_id" required>
@@ -127,35 +128,35 @@
 
                 <!-- Tombol untuk mendapatkan lokasi otomatis -->
                 <div class="coordinate-buttons mb-3">
-                    <button type="button" class="btn btn-outline-primary" onclick="getLocation()">
+                    <button type="button" class="btn btn-outline-primary" id="getLocationBtn">
                         <i class="bx bx-map me-2"></i>Dapatkan Lokasi Otomatis
                     </button>
                     <div class="form-text">Klik tombol di atas untuk mendapatkan lokasi Anda secara otomatis</div>
                 </div>
 
-                <!-- Map Container - Selalu ditampilkan -->
+                <!-- Search Box untuk Map -->
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Cari lokasi..." id="searchLocation">
+                    <button class="btn btn-outline-primary" type="button" id="searchButton">
+                        <i class="bx bx-search"></i> Cari
+                    </button>
+                </div>
+
+                <!-- Map Container - Pendekatan Sederhana -->
                 <div class="mb-3">
-                    <div id="map-container" class="map-container" style="height: 0; overflow: hidden;"></div>
+                    <div id="vendor-map-container"
+                        style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #ddd;" wire:ignore>
+                    </div>
                     <div class="form-text">Klik pada peta atau geser pin untuk menentukan lokasi yang tepat</div>
                 </div>
 
-                <!-- Input Koordinat -->
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label required-field">Latitude</label>
-                        <input type="number" step="any" class="form-control" wire:model="latitude"
-                            id="latitude-input" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label required-field">Longitude</label>
-                        <input type="number" step="any" class="form-control" wire:model="longitude"
-                            id="longitude-input" required>
-                    </div>
-                </div>
+                <!-- Input Koordinat (Hidden) -->
+                <input type="hidden" wire:model="latitude" id="latitude-input">
+                <input type="hidden" wire:model="longitude" id="longitude-input">
 
                 <!-- Input Alamat -->
                 <div class="mb-3">
-                    <label class="form-label required-field">Alamat</label>
+                    <label class="form-label required-field">Alamat Detail</label>
                     <textarea class="form-control" wire:model="address" rows="2" required id="address-input"></textarea>
                     @error('address')
                         <span class="text-danger">{{ $message }}</span>
@@ -169,8 +170,6 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-
-            <!-- ... (kode jadwal operasional tetap sama) ... -->
         </div>
     @endif
 
@@ -182,7 +181,7 @@
                 {{ $vendorType === 'formal' ? 'Dokumen & Foto' : 'Foto Usaha' }}
             </h3>
 
-            <div class="mb-3">
+            <div class="mb-4">
                 <label class="form-label required-field">Foto Usaha (Maksimal 4)</label>
                 <div class="image-upload-grid">
                     @for ($i = 0; $i < 4; $i++)
@@ -219,9 +218,16 @@
                     </div>
                 @endif
             </div>
+
+            <!-- Schedule Form Component -->
+            <livewire:components.schedule-form :hasSchedule="$has_schedule" :existingSchedules="$schedules"
+                key="schedule-form-{{ now()->timestamp }}" />
+
+            <!-- Service Form Component -->
+            <livewire:components.service-form :hasServices="$has_services" :existingServices="$vendor_services"
+                key="service-form-{{ now()->timestamp }}" />
         </div>
     @endif
-
 
     <!-- Navigation Buttons -->
     <div class="form-navigation">
@@ -243,52 +249,7 @@
             </button>
         @endif
     </div>
-
-    <!-- Modal untuk hasil lokasi -->
-    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="locationModalLabel">Lokasi Ditemukan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Lokasi Anda berhasil dideteksi. Silakan periksa dan sesuaikan pin pada peta untuk keakuratan.</p>
-                    <div class="alert alert-info">
-                        <strong>Alamat terdeteksi:</strong>
-                        <div id="detected-address">{{ $address_auto ?? '' }}</div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary" id="confirm-location">Gunakan Lokasi Ini</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal untuk error lokasi -->
-    <div class="modal fade" id="locationErrorModal" tabindex="-1" aria-labelledby="locationErrorModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="locationErrorModalLabel">Gagal Mendapatkan Lokasi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="location-error-message">Terjadi kesalahan saat mendapatkan lokasi.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
-
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -342,10 +303,6 @@
             padding: 2px;
         }
 
-        .schedule-container {
-            background-color: #f8f9fa;
-        }
-
         .vendor-type-toggle {
             display: flex;
             position: relative;
@@ -375,7 +332,7 @@
             top: 5px;
             bottom: 5px;
             width: 50%;
-            background: #007bff;
+            background: var(--primary-color);
             border-radius: 20px;
             transition: all 0.3s ease;
             z-index: 1;
@@ -387,20 +344,6 @@
 
         .toggle-slider.informal {
             left: calc(50% - 5px);
-        }
-
-        .location-mode-btn.active {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .leaflet-tile {
-            transform: none !important;
-            image-rendering: pixelated;
-        }
-
-        .leaflet-container {
-            z-index: 1;
         }
 
         .spinner {
@@ -417,35 +360,13 @@
             }
         }
 
-        .map-container {
-            width: 100%;
-            max-width: 400px;
-            height: 300px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+        /* Map container styling */
+        #vendor-map-container {
             background: #f8f9fa;
-            overflow: hidden;
-            margin: 0 auto;
-            position: relative;
         }
 
         .leaflet-container {
-            width: 100% !important;
-            height: 100% !important;
-            border-radius: 12px;
-            position: relative;
-        }
-
-        .leaflet-tile-container,
-        .leaflet-marker-pane,
-        .leaflet-shadow-pane,
-        .leaflet-overlay-pane {
-            transform: none !important;
-        }
-
-        .leaflet-tile {
-            transform: none !important;
-            image-rendering: pixelated;
+            border-radius: 8px;
         }
     </style>
 @endpush
@@ -453,245 +374,319 @@
 @push('scripts')
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let map, marker;
+        // Pendekatan SEDERHANA seperti di UserMap
+        let vendorMap = null;
+        let vendorMarker = null;
 
-        // Fungsi untuk inisialisasi peta — HANYA JIKA #map-container ADA
-        function initMap() {
-            const mapContainer = document.getElementById('map-container');
-            if (!mapContainer || map) return;
+        // Fungsi inisialisasi map yang SEDERHANA
+        function initVendorMap() {
+            console.log('🗺️ Initializing vendor map...');
 
-            // Set tinggi dan tampilkan
-            mapContainer.style.height = '300px';
-            mapContainer.style.overflow = 'hidden';
-
-            // Delay kecil untuk memastikan DOM siap
-            setTimeout(() => {
-                map = L.map('map-container').setView([-6.2088, 106.8456], 13);
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    noWrap: true,
-                    bounds: [
-                        [-90, -180],
-                        [90, 180]
-                    ]
-                }).addTo(map);
-
-                marker = L.marker([-6.2088, 106.8456], {
-                    draggable: true
-                }).addTo(map);
-
-                map.on('click', function(e) {
-                    updateMarker(e.latlng.lat, e.latlng.lng);
-                    updateCoordinateInputs(e.latlng.lat, e.latlng.lng);
-                    reverseGeocode(e.latlng.lat, e.latlng.lng);
-                });
-
-                marker.on('dragend', function(e) {
-                    const position = marker.getLatLng();
-                    updateCoordinateInputs(position.lat, position.lng);
-                    reverseGeocode(position.lat, position.lng);
-                });
-
-                // Paksa ukuran
-                setTimeout(() => {
-                    if (map) map.invalidateSize();
-                }, 100);
-
-            }, 100);
-        }
-
-        // Fungsi update marker
-        function updateMarker(lat, lng) {
-            if (marker) map.removeLayer(marker);
-            marker = L.marker([lat, lng], {
-                draggable: true
-            }).addTo(map);
-            map.setView([lat, lng], 15);
-
-            marker.on('dragend', function(e) {
-                const position = marker.getLatLng();
-                updateCoordinateInputs(position.lat, position.lng);
-                reverseGeocode(position.lat, position.lng);
-            });
-        }
-
-        // Update input koordinat & Livewire state
-        function updateCoordinateInputs(lat, lng) {
-            const latInput = document.getElementById('latitude-input');
-            const lngInput = document.getElementById('longitude-input');
-            if (latInput) latInput.value = lat;
-            if (lngInput) lngInput.value = lng;
-            @this.set('latitude', lat);
-            @this.set('longitude', lng);
-        }
-
-        // Reverse geocoding
-        function reverseGeocode(lat, lng) {
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.display_name) {
-                        const address = data.display_name;
-                        @this.set('address', address);
-                        const addrInput = document.getElementById('address-input');
-                        if (addrInput) addrInput.value = address;
-                        const detectedAddr = document.getElementById('detected-address');
-                        if (detectedAddr) detectedAddr.textContent = address;
-                    }
-                })
-                .catch(error => console.error('Error reverse geocoding:', error));
-        }
-
-        // Setup listener input manual
-        function setupCoordinateListeners() {
-            const latInput = document.getElementById('latitude-input');
-            const lngInput = document.getElementById('longitude-input');
-
-            if (latInput && lngInput) {
-                latInput.addEventListener('change', function() {
-                    if (this.value && lngInput.value) {
-                        const lat = parseFloat(this.value);
-                        const lng = parseFloat(lngInput.value);
-                        updateMarker(lat, lng);
-                        reverseGeocode(lat, lng);
-                    }
-                });
-
-                lngInput.addEventListener('change', function() {
-                    if (this.value && latInput.value) {
-                        const lat = parseFloat(latInput.value);
-                        const lng = parseFloat(this.value);
-                        updateMarker(lat, lng);
-                        reverseGeocode(lat, lng);
-                    }
-                });
-            }
-        }
-
-        // Ambil lokasi pengguna
-        function getLocation() {
-            if (!navigator.geolocation) {
-                showLocationError('Geolocation tidak didukung browser Anda');
+            const mapContainer = document.getElementById('vendor-map-container');
+            if (!mapContainer) {
+                console.error('❌ Vendor map container not found');
                 return;
             }
 
-            const locationBtn = document.querySelector('[onclick="getLocation()"]');
-            const originalText = locationBtn.innerHTML;
-            locationBtn.innerHTML = '<i class="bx bx-refresh spinner"></i> Mendeteksi...';
-            locationBtn.disabled = true;
+            // Hancurkan map lama jika ada
+            if (vendorMap) {
+                vendorMap.remove();
+                vendorMap = null;
+                vendorMarker = null;
+            }
+
+            // Get initial coordinates dari Livewire
+            let initialLat = @json($latitude) || -6.2088;
+            let initialLng = @json($longitude) || 106.8456;
+
+            console.log('📍 Using coordinates:', initialLat, initialLng);
+
+            // Initialize map - SEDERHANA seperti di UserMap
+            vendorMap = L.map('vendor-map-container').setView([initialLat, initialLng], 13);
+
+            // Add tile layer - SEDERHANA
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(vendorMap);
+
+            // Add marker - SEDERHANA
+            vendorMarker = L.marker([initialLat, initialLng], {
+                draggable: true
+            }).addTo(vendorMap);
+
+            // Event click pada map - SEDERHANA
+            vendorMap.on('click', function(e) {
+                console.log('🗺️ Map clicked:', e.latlng.lat, e.latlng.lng);
+                updateVendorMarkerPosition(e.latlng.lat, e.latlng.lng);
+                reverseGeocodeVendor(e.latlng.lat, e.latlng.lng);
+            });
+
+            // Event drag marker - SEDERHANA
+            vendorMarker.on('dragend', function(e) {
+                const position = vendorMarker.getLatLng();
+                console.log('📍 Marker dragged to:', position.lat, position.lng);
+                updateVendorMarkerPosition(position.lat, position.lng);
+                reverseGeocodeVendor(position.lat, position.lng);
+            });
+
+            // Initialize search - SEDERHANA
+            initVendorSearch();
+
+            console.log('✅ Vendor map initialized successfully');
+
+            // Fix map size setelah render
+            setTimeout(() => {
+                if (vendorMap) {
+                    vendorMap.invalidateSize();
+                    console.log('✅ Map size invalidated');
+                }
+            }, 300);
+        }
+
+        // Update marker position - SEDERHANA
+        function updateVendorMarkerPosition(lat, lng) {
+            if (!vendorMarker) {
+                vendorMarker = L.marker([lat, lng], {
+                    draggable: true
+                }).addTo(vendorMap);
+            } else {
+                vendorMarker.setLatLng([lat, lng]);
+            }
+
+            // Update Livewire - SEDERHANA
+            @this.set('latitude', lat);
+            @this.set('longitude', lng);
+
+            // Center map
+            if (vendorMap) {
+                vendorMap.setView([lat, lng], 15);
+            }
+        }
+
+        // Reverse geocoding - SEDERHANA
+        function reverseGeocodeVendor(lat, lng) {
+            console.log('🔍 Reverse geocoding:', lat, lng);
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data?.display_name) {
+                        console.log('📫 Address found:', data.display_name);
+                        @this.set('address', data.display_name);
+                        const addrInput = document.getElementById('address-input');
+                        if (addrInput) addrInput.value = data.display_name;
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Reverse geocoding error:', error);
+                    // Fallback
+                    const fallbackAddress = `Lat: ${lat}, Lng: ${lng}`;
+                    @this.set('address', fallbackAddress);
+                    const addrInput = document.getElementById('address-input');
+                    if (addrInput) addrInput.value = fallbackAddress;
+                });
+        }
+
+        // Search functionality - SEDERHANA
+        function initVendorSearch() {
+            const searchInput = document.getElementById('searchLocation');
+            const searchButton = document.getElementById('searchButton');
+
+            if (!searchInput || !searchButton) {
+                console.warn('⚠️ Search elements not found');
+                return;
+            }
+
+            searchButton.addEventListener('click', function() {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    alert('Masukkan kata kunci pencarian');
+                    return;
+                }
+
+                console.log('🔍 Searching for:', query);
+
+                // Show loading state
+                const originalText = searchButton.innerHTML;
+                searchButton.innerHTML = '<i class="bx bx-loader spinner"></i>';
+                searchButton.disabled = true;
+
+                fetch(
+                        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`
+                        )
+                    .then(response => response.json())
+                    .then(data => {
+                        searchButton.innerHTML = originalText;
+                        searchButton.disabled = false;
+
+                        if (data.length > 0) {
+                            const result = data[0];
+                            console.log('✅ Search result:', result);
+                            updateVendorMarkerPosition(parseFloat(result.lat), parseFloat(result.lon));
+                            if (result.display_name) {
+                                @this.set('address', result.display_name);
+                            }
+                        } else {
+                            alert('Lokasi tidak ditemukan. Coba kata kunci lain.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Search error:', error);
+                        searchButton.innerHTML = originalText;
+                        searchButton.disabled = false;
+                        alert('Terjadi kesalahan saat mencari lokasi');
+                    });
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchButton.click();
+                }
+            });
+        }
+
+        // Geolocation - SEDERHANA
+        function getVendorLocation() {
+            console.log('📍 getVendorLocation function called');
+
+            if (!navigator.geolocation) {
+                alert('Browser tidak mendukung geolocation');
+                return;
+            }
+
+            const btn = document.getElementById('getLocationBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="bx bx-loader spinner me-2"></i>Mendeteksi...';
+            }
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    locationBtn.innerHTML = originalText;
-                    locationBtn.disabled = false;
+                    console.log('📍 GPS location success:', position.coords);
 
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
 
-                    updateCoordinateInputs(lat, lng);
-                    updateMarker(lat, lng);
-                    reverseGeocode(lat, lng);
+                    updateVendorMarkerPosition(lat, lng);
+                    reverseGeocodeVendor(lat, lng);
 
-                    const modalElement = document.getElementById('locationModal');
-                    const modal = new bootstrap.Modal(modalElement);
-                    modal.show();
-
-                    // Tambahkan event listener ke tombol konfirmasi
-                    const confirmBtn = document.getElementById('confirm-location');
-                    if (confirmBtn) {
-                        // Hapus event listener lama (jika ada) agar tidak double
-                        confirmBtn.replaceWith(confirmBtn.cloneNode(true));
-                        document.getElementById('confirm-location').addEventListener('click', function() {
-                            modal.hide(); // Tutup modal secara manual
-                            // Lokasi sudah di-set via updateCoordinateInputs() & updateMarker()
-                        });
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bx bx-map me-2"></i>Dapatkan Lokasi Otomatis';
                     }
+
+                    // Show success alert
+                    alert('Lokasi berhasil didapatkan! Silakan periksa pin pada peta.');
                 },
                 (error) => {
-                    locationBtn.innerHTML = originalText;
-                    locationBtn.disabled = false;
-
-                    let errorMessage = 'Gagal mendapatkan lokasi: ';
+                    console.error('❌ Geolocation error:', error);
+                    let message = 'Gagal mendapatkan lokasi: ';
                     switch (error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage += 'Izin lokasi ditolak.';
+                            message += 'Izin lokasi ditolak. Izinkan akses lokasi di browser settings.';
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage += 'Informasi lokasi tidak tersedia.';
+                            message += 'Informasi lokasi tidak tersedia. Pastikan GPS aktif.';
                             break;
                         case error.TIMEOUT:
-                            errorMessage += 'Permintaan lokasi timeout.';
+                            message += 'Permintaan lokasi timeout. Coba lagi.';
                             break;
                         default:
-                            errorMessage += 'Error tidak diketahui.';
+                            message += 'Error tidak diketahui.';
                     }
-                    showLocationError(errorMessage);
+                    alert(message);
+
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bx bx-map me-2"></i>Dapatkan Lokasi Otomatis';
+                    }
                 }, {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 15000,
                     maximumAge: 60000
                 }
             );
         }
 
-        function showLocationError(message) {
-            const errorMsg = document.getElementById('location-error-message');
-            if (errorMsg) errorMsg.textContent = message;
-            const errorModal = new bootstrap.Modal(document.getElementById('locationErrorModal'));
-            errorModal.show();
-        }
+        // ============ LIVEWIRE INTEGRATION SEDERHANA ============
 
-        // ================ INISIALISASI & HOOKS LIVWIRE ================
+        // Inisialisasi saat DOM ready - seperti di UserMap
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 DOM loaded, setting up vendor map...');
 
-        document.addEventListener('livewire:initialized', () => {
-            // Coba inisialisasi peta jika step 2 aktif
-            if (@this.get('currentStep') === 2) {
-                setTimeout(() => {
-                    initMap();
-                    setupCoordinateListeners();
-                    if (@this.get('latitude') && @this.get('longitude')) {
-                        updateMarker(@this.get('latitude'), @this.get('longitude'));
-                    }
-                }, 100); // Delay kecil untuk pastikan DOM siap
+            // Setup event listeners - PERBAIKAN: Pastikan button ada
+            const locationBtn = document.getElementById('getLocationBtn');
+            if (locationBtn) {
+                console.log('✅ Found getLocationBtn, adding event listener');
+                locationBtn.addEventListener('click', getVendorLocation);
+            } else {
+                console.error('❌ getLocationBtn not found!');
             }
 
-            // Setup event listener untuk tombol konfirmasi lokasi (jaga-jaga)
-            const confirmBtnGlobal = document.getElementById('confirm-location');
-            if (confirmBtnGlobal) {
-                confirmBtnGlobal.replaceWith(confirmBtnGlobal.cloneNode(true));
-                document.getElementById('confirm-location').addEventListener('click', function() {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('locationModal'));
-                    if (modal) modal.hide();
-                });
+            // Inisialisasi map dengan delay seperti di UserMap
+            setTimeout(() => {
+                if (@this.get('currentStep') === 2) {
+                    console.log('🔄 Initializing vendor map on step 2...');
+                    initVendorMap();
+                }
+            }, 800);
+        });
+
+        // Handle step changes - TAMBAHKAN setup ulang event listeners
+        Livewire.hook('morph.updated', function({
+            component
+        }) {
+            if (component.name === '{{ $this->getName() }}' && @this.get('currentStep') === 2) {
+                console.log('🔄 Step 2 activated, initializing vendor map...');
+
+                // Setup ulang event listeners karena DOM mungkin di-render ulang
+                setTimeout(() => {
+                    const locationBtn = document.getElementById('getLocationBtn');
+                    if (locationBtn) {
+                        console.log('✅ Re-adding event listener to getLocationBtn');
+                        // Hapus event listener lama dulu
+                        locationBtn.replaceWith(locationBtn.cloneNode(true));
+                        // Tambahkan event listener baru
+                        document.getElementById('getLocationBtn').addEventListener('click',
+                            getVendorLocation);
+                    }
+
+                    if (!vendorMap) {
+                        console.log('🔄 Initializing new vendor map...');
+                        initVendorMap();
+                    } else {
+                        console.log('🔄 Invalidating existing vendor map size...');
+                        setTimeout(() => {
+                            if (vendorMap) {
+                                vendorMap.invalidateSize();
+                                console.log('✅ Vendor map size invalidated');
+                            }
+                        }, 100);
+                    }
+                }, 500);
             }
         });
 
-        // Re-inisialisasi saat Livewire update DOM (misal: ganti step)
-        Livewire.hook('morph.updated', ({
-            el,
+        // Cleanup saat keluar dari step 2
+        Livewire.hook('morph.removing', function({
             component
-        }) => {
-            if (component.name === '{{ $this->getName() }}') {
-                if (@this.get('currentStep') === 2) {
-                    setTimeout(() => {
-                        initMap();
-                        setupCoordinateListeners();
-                        if (@this.get('latitude') && @this.get('longitude')) {
-                            updateMarker(@this.get('latitude'), @this.get('longitude'));
-                        } else {
-                            updateMarker(-6.2088, 106.8456);
-                        }
-                        // Paksa ukuran lagi
-                        if (map) {
-                            setTimeout(() => map.invalidateSize(), 200);
-                        }
-                    }, 300); // Delay lebih lama
+        }) {
+            if (component.name === '{{ $this->getName() }}' && @this.get('currentStep') !== 2) {
+                console.log('🗑️ Cleaning up vendor map...');
+                if (vendorMap) {
+                    try {
+                        vendorMap.remove();
+                        vendorMap = null;
+                        vendorMarker = null;
+                        console.log('✅ Vendor map cleaned up');
+                    } catch (error) {
+                        console.warn('⚠️ Error cleaning up vendor map:', error);
+                    }
                 }
             }
         });
 
-        // Image preview & phone formatting (tetap sama)
+        // Image preview & phone formatting
         document.addEventListener('livewire:initialized', () => {
             const imageInputs = document.querySelectorAll('input[type="file"]');
             imageInputs.forEach(input => {
@@ -712,7 +707,6 @@
                             }
                         }
                         reader.readAsDataURL(this.files[0]);
-                        @this.call('$refresh');
                     }
                 });
             });

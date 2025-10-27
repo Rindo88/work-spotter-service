@@ -32,17 +32,10 @@
                     <a href="{{ route('vendor.show', $vendor->id) }}" 
                        class="d-block px-3 py-2 text-decoration-none text-dark rounded hover-bg-light">
                         <div class="d-flex align-items-center">
-                            @if($vendor->profile_picture)
-                            <img src="{{ $vendor->profile_picture }}" 
+                            <img src="{{ $vendor->profile_picture ?: asset('images/logo-workspotter.png') }}" 
                                  alt="{{ $vendor->business_name }}" 
                                  class="rounded-circle me-2" 
                                  style="width: 32px; height: 32px; object-fit: cover;">
-                            @else
-                            <div class="rounded-circle bg-light me-2 d-flex align-items-center justify-content-center" 
-                                 style="width: 32px; height: 32px;">
-                                <span class="text-muted small">{{ substr($vendor->business_name, 0, 1) }}</span>
-                            </div>
-                            @endif
                             <div>
                                 <p class="mb-0 small fw-semibold">{{ $vendor->business_name }}</p>
                                 <p class="mb-0 text-muted small">{{ $vendor->category->name }}</p>
@@ -66,7 +59,7 @@
                        class="d-block px-3 py-2 text-decoration-none text-dark rounded hover-bg-light">
                         <div class="d-flex align-items-center">
                             @if($service->image_url)
-                            <img src="{{ $service->image_url }}" 
+                            <img src="{{ $service->image_url ?: asset('images/logo-workspotter.png') }}" 
                                  alt="{{ $service->name }}" 
                                  class="rounded me-2" 
                                  style="width: 32px; height: 32px; object-fit: cover;">

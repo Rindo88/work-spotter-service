@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/vendor/schedule', [VendorController::class, 'schedule'])->name('vendor.schedule');
     Route::get('/vendor/location', [VendorController::class, 'location'])->name('vendor.location');
     Route::get('/vendor/rfid', [VendorController::class, 'rfid'])->name('vendor.rfid');
-    Route::get('/Become-vendor', VendorRegistration::class)->name('vendor.register');
+    Route::get('/become-vendor', VendorRegistration::class)->name('vendor.register');
 
 
     Route::get('/checkin', function () {
@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
         return view('map.index');
     })->name('user.map');
 
+    
     Route::get('/chat', App\Livewire\Chat\Index::class)->name('chat.index');
     Route::get('/chat/vendor/{vendorId}', App\Livewire\Chat\Room::class)->name('chat.room');
     Route::get('/notifications', App\Livewire\Notification\NotificationsIndex::class)->name('notifications.index');

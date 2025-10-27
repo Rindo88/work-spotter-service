@@ -34,10 +34,8 @@ class VendorController extends Controller
 
     public function show(Vendor $vendor)
     {
-        // Load relationships termasuk jadwal
         $vendor->load(['user', 'category', 'reviews.user', 'services', 'schedules']);
 
-        // Ambil data checkin terbaru untuk vendor informal
         $latestCheckin = null;
         $currentLocation = null;
 
@@ -59,7 +57,6 @@ class VendorController extends Controller
             }
         }
 
-        // Ambil layanan/produk milik vendor
         $services = $vendor->services()->latest()->get();
 
         return view('vendor.show', compact(

@@ -5,6 +5,7 @@ namespace App\Livewire\Vendor;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LocationManager extends Component
 {
@@ -14,6 +15,11 @@ class LocationManager extends Component
     public $is_mobile = false;
     public $operational_area;
     public $successMessage;
+
+    protected $listeners = [
+        'location-updated' => 'handleLocationUpdate',
+        'address-updated' => 'handleAddressUpdate'
+    ];
 
     public function mount()
     {
@@ -34,23 +40,50 @@ class LocationManager extends Component
         }
     }
 
+    public function handleLocationUpdate($location)
+    {
+        $this->latitude = $location['latitude'];
+        $this->longitude = $location['longitude'];
+        Log::info('Location updated via event', $location);
+    }
+
+    public function handleAddressUpdate($address)
+    {
+        $this->address = $address;
+        Log::info('Address updated via event', ['address' => $address]);
+    }
+
     public function getCurrentLocation()
     {
-        // Hanya panggil JavaScript, tidak perlu check di PHP
         $this->js(<<<JS
             if (!navigator.geolocation) {
                 alert('Geolocation tidak didukung browser Anda.');
                 return;
             }
 
+            const btn = document.getElementById('getLocationBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="bx bx-loader spinner"></i> Mendeteksi Lokasi...';
+            btn.disabled = true;
+
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
+                    
+                    console.log('📍 GPS Location:', lat, lng);
                     
                     // Update Livewire properties
                     \$wire.set('latitude', lat);
                     \$wire.set('longitude', lng);
+                    
+                    // Update map marker
+                    if (window.updateVendorMarker) {
+                        window.updateVendorMarker(lat, lng);
+                    }
                     
                     // Reverse geocode to get address
                     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=\${lat}&lon=\${lng}`)
@@ -58,12 +91,40 @@ class LocationManager extends Component
                         .then(data => {
                             if (data.display_name) {
                                 \$wire.set('address', data.display_name);
+                                console.log('📫 Address found:', data.display_name);
                             }
                         })
-                        .catch(error => console.error('Error:', error));
+                        .catch(error => {
+                            console.error('Reverse geocode error:', error);
+                            // Fallback address
+                            \$wire.set('address', 'Lokasi: ' + lat + ', ' + lng);
+                        });
                 },
                 (error) => {
-                    alert('Tidak dapat mendapatkan lokasi saat ini: ' + error.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    
+                    let message = 'Gagal mendapatkan lokasi: ';
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            message += 'Izin lokasi ditolak. Izinkan akses lokasi di browser settings.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message += 'Informasi lokasi tidak tersedia. Pastikan GPS aktif.';
+                            break;
+                        case error.TIMEOUT:
+                            message += 'Permintaan lokasi timeout. Coba lagi.';
+                            break;
+                        default:
+                            message += 'Error tidak diketahui.';
+                    }
+                    alert(message);
+                    console.error('Geolocation error:', error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 60000
                 }
             );
         JS);

@@ -187,7 +187,13 @@
 
                                             <!-- Mobile: Business name and distance inline with image -->
                                             <div class="d-flex justify-content-between align-items-center w-100 d-sm-none">
-                                                <h6 class="fw-bold mb-0 text-truncate me-2">{{ $vendor->business_name }}</h6>
+                                                <h6 class="fw-bold mb-0 text-truncate me-2">
+                                                    <a href="{{ route('vendor.show', ['vendor' => $vendor->id]) }}" 
+                                                       class="text-decoration-none text-dark"
+                                                       onclick="event.stopPropagation()">
+                                                        {{ $vendor->business_name }}
+                                                    </a>
+                                                </h6>
                                                 <span class="badge bg-light text-dark flex-shrink-0">
                                                     <i class="bx bxs-map-pin me-1"></i>{{ number_format($vendor->distance, 1) }}km
                                                 </span>
@@ -198,7 +204,13 @@
                                         <div class="flex-grow-1 w-100 w-sm-auto">
                                             <!-- Desktop: Business name and distance -->
                                             <div class="d-none d-sm-flex justify-content-between align-items-start mb-1">
-                                                <h6 class="fw-bold mb-0">{{ $vendor->business_name }}</h6>
+                                                <h6 class="fw-bold mb-0">
+                                                    <a href="{{ route('vendor.show', ['vendor' => $vendor->id]) }}" 
+                                                       class="text-decoration-none text-dark"
+                                                       onclick="event.stopPropagation()">
+                                                        {{ $vendor->business_name }}
+                                                    </a>
+                                                </h6>
                                                 <span class="badge bg-light text-dark">
                                                     <i class="bx bxs-map-pin me-1"></i>{{ number_format($vendor->distance, 1) }}km
                                                 </span>
