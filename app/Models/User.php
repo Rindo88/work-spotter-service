@@ -13,17 +13,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
 
-
-
-class User extends Authenticatable implements MustVerifyEmail
-
+class User extends Authenticatable
 {
+    use HasApiTokens;
 
-    use HasFactory, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
 
-
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
 
         'name',
@@ -61,185 +69,80 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
 
             'password' => 'hashed',
-
         ];
-
     }
 
-
-
-
-
-
-
-    public function chats()
-
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin(): bool
     {
-
-        return $this->hasMany(Chat::class);
-
+        return $this->role === 'admin';
     }
 
-
-
-    public function unreadMessages()
-
+    /**
+     * Check if user is regular user
+     */
+    public function isUser(): bool
     {
-
-        return $this->hasMany(Chat::class)->where('sender_type', 'vendor')->unread();
-
+        return $this->role === 'user';
     }
 
-
-
-    public function latestMessageWithVendor($vendorId = null)
-
+    /**
+     * Scope to get only admin users
+     */
+    public function scopeAdmins($query)
     {
-
-        $query = $this->hasOne(Chat::class)->latest();
-
-
-
-        if ($vendorId) {
-
-            $query->where('vendor_id', $vendorId);
-
-        }
-
-
-
-        return $query;
-
+        return $query->where('role', 'admin');
     }
 
+    /**
+     * Scope to get only regular users
+     */
+    public function scopeUsers($query)
+    {
+        return $query->where('role', 'user');
+    }
 
-
-    // Relasi ke model Vendor (table vendors)
-
+    /**
+     * Get the vendor associated with the user
+     */
     public function vendor()
 
     {
 
         return $this->hasOne(Vendor::class);
-
     }
 
-
-
-    // Cek apakah user punya vendor profile
-
-    public function hasVendorProfile()
-
+    /**
+     * Get the reviews written by the user
+     */
+    public function reviews()
     {
-
-        return $this->vendor !== null;
-
+        return $this->hasMany(Review::class);
     }
 
-
-
-    // Cek apakah vendor sudah aktif (checkin)
-
-    public function isVendorActive()
-
+    /**
+     * Get the checkins made by the user
+     */
+    public function checkins()
     {
-
-        if (!$this->isVendor()) return false;
-
-
-
-        return \App\Models\Checkin::where('user_id', $this->id)
-
-            ->where('status', 'checked_in')
-
-            ->whereDate('checkin_time', today())
-
-            ->exists();
-
+        return $this->hasMany(Checkin::class);
     }
 
-
-
-    // Get current active checkin
-
-    public function currentCheckin()
-
+    /**
+     * Get the chats where the user is involved
+     */
+    public function chats()
     {
-
-        if (!$this->isVendor()) return null;
-
-
-
-        return \App\Models\Checkin::where('user_id', $this->id)
-
-            ->where('status', 'checked_in')
-
-            ->with('vendor')
-
-            ->first();
-
+        return $this->hasMany(Chat::class);
     }
-
-
-
-
-
-    // Method sederhana untuk cek vendor
-
-    public function getHasVendorAttribute()
-
-    {
-
-        return $this->vendor !== null;
-
-    }
-
-
-
-    public function isAdmin(): bool
-
-    {
-
-        return $this->role === 'admin';
-
-    }
-
-
-
-    public function isVendor(): bool
-
-    {
-
-        return $this->role === 'vendor' && $this->hasVendorProfile();
-
-    }
-
-
-
-    public function isUser(): bool
-
-    {
-
-        return $this->role === 'user';
-
-    }
-
-
-
-
-
-       // Relasi favorites
-
-
+    // Relasi favorites
     public function favorites()
-
-
     {
 
 
         return $this->hasMany(Favorite::class);
-
-
     }
 
 
@@ -256,8 +159,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
         return $this->favorites()->vendorFavorites()->with('vendor');
-
-
     }
 
 
@@ -274,8 +175,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
         return $this->favorites()->serviceFavorites()->with('service.vendor');
-
-
     }
 
 
@@ -301,8 +200,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
             ->exists();
-
-
     }
 
 
@@ -325,8 +222,5 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
             ->exists();
-
-
     }
-
 }
