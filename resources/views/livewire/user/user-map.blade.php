@@ -32,6 +32,7 @@
                         <option value="3">Radius 3 km</option>
                         <option value="5" selected>Radius 5 km</option>
                         <option value="10">Radius 10 km</option>
+                        <option value="1000000000000000">Semua</option>
                     </select>
                 </div>
             </div>

@@ -13,10 +13,11 @@
             <h5 class="fw-bold mb-1">{{ $vendor->business_name }}</h5>
             <p class="text-muted small mb-2">
                 <i class="bx bx-tag me-1"></i>{{ $vendor->category->name ?? 'Pedagang' }}
-                <span class="badge bg-sage ms-2">
+                <span class="badge bg-{{ $vendor->type === 'formal' ? 'primary' : 'success' }} ms-2">
                     {{ $vendor->type === 'formal' ? 'Toko Tetap' : 'Pedagang Keliling' }}
                 </span>
             </p>
+
 
             <!-- Rating Display -->
             <div class="d-flex align-items-center justify-content-center mb-3">
@@ -31,13 +32,13 @@
                 </span>
             </div>
 
-            <!-- Favorite Button -->
+            {{-- {-- Favorite Button - Posisi di kanan atas --}}
             <button class="btn btn-sm favorite-btn position-absolute"
-                style="top: 15px; right: 15px; width: 32px; height: 32px; padding: 0; border-radius: 50%; background-color: #92B6B1; border: none;"
+                style="top: 15px; right: 15px; width: 32px; height: 32px; padding: 0; border-radius: 50%;"
                 data-vendor-id="{{ $vendor->id }}"
-                data-is-favorited="{{ auth()->check() && auth()->user()->hasFavoritedVendor($vendor->id) ? 'true' : 'false' }}">
+                data-is-favorited="{{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'true' : 'false' }}">
                 <i
-                    class="bx {{ auth()->check() && auth()->user()->hasFavoritedVendor($vendor->id) ? 'bxs-heart text-white' : 'bx-heart text-white' }} fs-6"></i>
+                    class="bx {{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'bxs-heart text-danger' : 'bx-heart text-muted' }} fs-6"></i>
             </button>
 
             <!-- Status Aktif -->
@@ -54,17 +55,22 @@
                 </div>
             @endif
 
-            <!-- Prediksi Kehadiran -->
+            {{-- Prediksi Kehadiran --}}
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body p-2">
-                    <button class="btn btn-sage w-100" data-bs-toggle="modal" data-bs-target="#predictModal">
-                        <i class="bx bx-robot me-1"></i> Prediksi Kehadiran (AI)
-                    </button>
+                <div class="card-body">
+                    <h5 class="fw-semibold">{{ $vendor->business_name }}</h5>
+                    <p class="text-muted">{{ $vendor->category->name }}</p>
+
+                    <div class="mt-3">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
+                            <i class="bi bi-robot me-1"></i> Prediksi Kehadiran (AI)
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="bg-light rounded-3 p-3 mb-3 text-start">
-                <h6 class="fw-bold text-sage mb-1">
+                <h6 class="fw-bold text-primary mb-1">
                     <i class="bx bx-info-circle me-1"></i>Deskripsi Usaha
                 </h6>
                 <p class="mb-0 small text-muted">{{ $vendor->description ?? 'Belum ada deskripsi.' }}</p>
@@ -76,19 +82,14 @@
                 </a>
                 @if ($currentLocation && $currentLocation['is_active'])
                     <a href="https://www.google.com/maps/dir/?api=1&destination={{ $currentLocation['latitude'] }},{{ $currentLocation['longitude'] }}"
-                        target="_blank" class="btn btn-sage rounded-pill">
-                        <i class="bx bx-map me-1"></i> Navigasi
-                    </a>
-                @elseif($vendor->type === 'formal' && $vendor->latitude && $vendor->longitude)
-                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $vendor->latitude }},{{ $vendor->longitude }}"
-                        target="_blank" class="btn btn-sage rounded-pill">
+                        target="_blank" class="btn btn-primary rounded-pill">
                         <i class="bx bx-map me-1"></i> Navigasi
                     </a>
                 @endif
             </div>
         </div>
 
-        <!-- Tabs -->
+    <!-- Tabs -->
         <ul class="nav nav-pills nav-justified mb-3" id="vendorTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="info-tab" data-bs-toggle="pill" data-bs-target="#info" type="button"
@@ -116,7 +117,7 @@
                 <!-- Informasi Kontak -->
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3 text-sage">
+                        <h6 class="fw-bold mb-3 text-primary">
                             <i class="bx bx-phone me-1"></i>Informasi Kontak
                         </h6>
                         <div class="row small text-muted">
@@ -142,10 +143,11 @@
                     </div>
                 </div>
 
+
                 <!-- Informasi Usaha -->
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3 text-sage">
+                        <h6 class="fw-bold mb-3 text-primary">
                             <i class="bx bx-info-circle me-1"></i>Informasi Usaha
                         </h6>
                         <div class="row small text-muted">
@@ -173,10 +175,12 @@
                     </div>
                 </div>
 
+
+
                 <!-- Jadwal Operasional -->
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3 text-sage">
+                        <h6 class="fw-bold mb-3 text-primary">
                             <i class="bx bx-time me-1"></i>Jadwal Operasional
                         </h6>
                         <div class="schedule-list">
@@ -199,19 +203,19 @@
                                     $isToday = $today === $englishDay;
                                 @endphp
                                 <div
-                                    class="schedule-item d-flex justify-content-between align-items-center py-2 {{ $isToday ? 'bg-sage-light rounded-2 px-2' : '' }}">
+                                    class="schedule-item d-flex justify-content-between align-items-center py-2 {{ $isToday ? 'bg-light rounded-2 px-2' : '' }}">
                                     <div class="d-flex align-items-center">
                                         <span
-                                            class="{{ $isToday ? 'fw-bold text-sage' : 'text-muted' }}">{{ $indonesianDay }}</span>
+                                            class="{{ $isToday ? 'fw-bold text-primary' : 'text-muted' }}">{{ $indonesianDay }}</span>
                                         @if ($isToday)
-                                            <span class="badge bg-sage ms-2">Hari Ini</span>
+                                            <span class="badge bg-primary ms-2">Hari Ini</span>
                                         @endif
                                     </div>
                                     <div class="text-end">
                                         @if ($schedule && $schedule->is_closed)
                                             <span class="text-danger small">Tutup</span>
                                         @elseif($schedule && $schedule->open_time && $schedule->close_time)
-                                            <span class="{{ $isToday ? 'fw-bold text-sage' : 'text-muted' }} small">
+                                            <span class="{{ $isToday ? 'fw-bold text-primary' : 'text-muted' }} small">
                                                 {{ \Carbon\Carbon::parse($schedule->open_time)->format('H:i') }} -
                                                 {{ \Carbon\Carbon::parse($schedule->close_time)->format('H:i') }}
                                             </span>
@@ -231,9 +235,9 @@
                 <!-- Review Section -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3 text-sage">
+                        <h6 class="fw-bold mb-3 text-primary">
                             <i class="bx bx-star me-1"></i>Ulasan Pelanggan
-                            <span class="badge bg-sage ms-2">{{ $vendor->reviews->count() }}</span>
+                            <span class="badge bg-primary ms-2">{{ $vendor->reviews->count() }}</span>
                         </h6>
 
                         @auth
@@ -258,7 +262,7 @@
                                     @error('comment')
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror
-                                    <button type="submit" class="btn btn-sage btn-sm w-100 rounded-pill">
+                                    <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill">
                                         <i class="bx bx-send me-1"></i>Kirim Review
                                     </button>
                                 </form>
@@ -308,30 +312,24 @@
                 <!-- Informasi Lokasi -->
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3 text-sage">
+                        <h6 class="fw-bold mb-3 text-primary">
                             <i class="bx bx-map me-1"></i>Informasi Lokasi
                         </h6>
 
                         @if ($vendor->type === 'formal')
                             <!-- Pedagang Formal -->
                             <div class="d-flex align-items-start mb-2">
-                                <i class="bx bx-store text-sage me-2 mt-1"></i>
+                                <i class="bx bx-store text-muted me-2 mt-1"></i>
                                 <div>
                                     <strong>Alamat Toko:</strong>
                                     <p class="mb-0 text-muted small">{{ $vendor->address ?? 'Alamat belum tersedia' }}</p>
-                                    @if ($vendor->latitude && $vendor->longitude)
-                                        <small class="text-success">
-                                            <i class="bx bx-check-circle me-1"></i>
-                                            Lokasi tetap tersedia
-                                        </small>
-                                    @endif
                                 </div>
                             </div>
                         @else
                             <!-- Pedagang Informal -->
                             @if ($currentLocation && $currentLocation['is_active'])
                                 <div class="d-flex align-items-start mb-2">
-                                    <i class="bx bx-map-pin text-sage me-2 mt-1"></i>
+                                    <i class="bx bx-map-pin text-success me-2 mt-1"></i>
                                     <div>
                                         <strong>Lokasi Saat Ini:</strong>
                                         <p class="mb-0 text-muted small">
@@ -342,36 +340,21 @@
                                         </small>
                                     </div>
                                 </div>
-                                
-                                <!-- Lokasi Default (Tambahan) -->
-                                <div class="d-flex align-items-start mb-2">
-                                    <i class="bx bx-map text-sage me-2 mt-1"></i>
-                                    <div>
-                                        <strong>Lokasi Default:</strong>
-                                        <p class="mb-0 text-muted small">Area operasional utama pedagang</p>
-                                        <small class="text-muted">
-                                            <i class="bx bx-info-circle me-1"></i>
-                                            Lokasi yang sering dikunjungi
-                                        </small>
-                                    </div>
-                                </div>
                             @else
                                 <div class="d-flex align-items-start mb-2">
-                                    <i class="bx bx-map text-sage me-2 mt-1"></i>
+                                    <i class="bx bx-map text-muted me-2 mt-1"></i>
                                     <div>
-                                        <strong>Lokasi Default:</strong>
-                                        <p class="mb-0 text-muted small">Area operasional utama</p>
-                                        <small class="text-muted">
-                                            <i class="bx bx-info-circle me-1"></i>
-                                            Pedagang akan muncul di lokasi tepat saat check-in
-                                        </small>
+                                        <strong>Status:</strong>
+                                        <p class="mb-0 text-muted small">Sedang tidak berjualan</p>
+                                        <small class="text-muted">Pedagang akan muncul di peta saat melakukan
+                                            check-in</small>
                                     </div>
                                 </div>
                             @endif
                         @endif
 
                         <div class="d-flex align-items-start">
-                            <i class="bx bx-info-circle text-sage me-2 mt-1"></i>
+                            <i class="bx bx-info-circle text-muted me-2 mt-1"></i>
                             <div>
                                 <strong>Tipe:</strong>
                                 <p class="mb-0 text-muted small">
@@ -386,6 +369,13 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-0">
                         <div id="vendorMap" style="height: 400px; width: 100%; border-radius: 12px;"></div>
+
+                        @if ($vendor->type === 'informal' && (!$currentLocation || !$currentLocation['is_active']))
+                            <div class="text-center py-5">
+                                <i class="bx bx-map display-4 text-muted"></i>
+                                <p class="text-muted small mt-2">Peta akan muncul saat pedagang melakukan check-in</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -435,14 +425,13 @@
         </div>
     </div>
 
-    <!-- Modal Prediksi -->
+
+    <!-- Modal -->
     <div class="modal fade" id="predictModal" tabindex="-1" aria-labelledby="predictModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-sage" id="predictModalLabel">
-                        <i class="bx bx-robot me-1"></i>Prediksi Kehadiran Pedagang
-                    </h5>
+                    <h5 class="modal-title" id="predictModalLabel">Prediksi Kehadiran Pedagang</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -455,19 +444,21 @@
                             <label class="form-label">Jam Selesai (Opsional)</label>
                             <input type="time" class="form-control" name="end_time">
                         </div>
-                        <button type="submit" class="btn btn-sage w-100">
-                            <i class="bx bx-search me-1"></i> Prediksi Sekarang
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-search me-1"></i> Prediksi Sekarang
                         </button>
                     </form>
 
                     <div id="predictionResult" class="mt-4" style="display:none;">
-                        <h6 class="fw-semibold text-sage">Hasil Prediksi:</h6>
+                        <h6 class="fw-semibold">Hasil Prediksi:</h6>
                         <pre class="bg-light p-3 rounded" id="aiOutput"></pre>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
 @endsection
 
 @push('styles')
@@ -518,41 +509,16 @@
             color: #ffc107;
         }
 
+        .rating-display .bi-star-half {
+            position: relative;
+        }
+
+        .rating-display .bi-star-half:before {
+            content: "\f5c0";
+        }
+
         .schedule-list hr:last-child {
             display: none;
-        }
-
-        /* Sage Color Theme */
-        .btn-sage {
-            background-color: #92B6B1 !important;
-            border-color: #92B6B1 !important;
-            color: white !important;
-        }
-
-        .btn-sage:hover {
-            background-color: #7fa39e !important;
-            border-color: #7fa39e !important;
-            color: white !important;
-        }
-
-        .text-sage {
-            color: #92B6B1 !important;
-        }
-
-        .bg-sage {
-            background-color: #92B6B1 !important;
-        }
-
-        .bg-sage-light {
-            background-color: rgba(146, 182, 177, 0.1) !important;
-        }
-
-        .badge.bg-sage {
-            background-color: #92B6B1 !important;
-        }
-
-        .border-sage {
-            border-color: #92B6B1 !important;
         }
     </style>
 @endpush
@@ -561,58 +527,44 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Initialize vendor map
-            initVendorMap();
+            // Tentukan koordinat untuk map
+            let lat, lng, locationName;
 
-            // Handle favorite buttons
-            initFavoriteButtons();
-
-            // Handle prediction form
-            initPredictionForm();
-
-            // Handle tab changes for map resize
-            initTabHandlers();
-        });
-
-        function initVendorMap() {
-            // Determine coordinates for map
-            let mapLocation = {
-                latitude: {{ $vendor->latitude ?? -6.2 }},
-                longitude: {{ $vendor->longitude ?? 106.8 }},
-                location_name: "{{ $vendor->business_name }}",
-                is_active: {{ $vendor->type === 'formal' ? 'true' : ($currentLocation && $currentLocation['is_active'] ? 'true' : 'false') }}
-            };
-
-            // For informal vendors with active checkin, use checkin location
-            @if($vendor->type === 'informal' && $currentLocation && $currentLocation['is_active'])
-                mapLocation = {
-                    latitude: {{ $currentLocation['latitude'] }},
-                    longitude: {{ $currentLocation['longitude'] }},
-                    location_name: "{{ $currentLocation['location_name'] ?? $vendor->business_name . ' - Lokasi Saat Ini' }}",
-                    is_active: true
-                };
+            @if ($vendor->type === 'formal')
+                // Pedagang formal: gunakan alamat tetap
+                lat = {{ $vendor->latitude ?? -6.2 }};
+                lng = {{ $vendor->longitude ?? 106.8 }};
+                locationName = "{{ $vendor->business_name }} - Toko Tetap";
+            @elseif ($currentLocation && $currentLocation['is_active'])
+                // Pedagang informal dengan checkin aktif
+                lat = {{ $currentLocation['latitude'] }};
+                lng = {{ $currentLocation['longitude'] }};
+                locationName =
+                    "{{ $currentLocation['location_name'] ?? $vendor->business_name . ' - Lokasi Saat Ini' }}";
+            @else
+                // Pedagang informal tanpa checkin aktif - hide map
+                lat = null;
+                lng = null;
             @endif
 
-            // Initialize map
-            const mapElement = document.getElementById('vendorMap');
-            if (!mapElement) return;
+            // Inisialisasi map hanya jika koordinat valid
+            if (lat && lng) {
+                const map = L.map('vendorMap', {
+                    zoomControl: true,
+                    scrollWheelZoom: false
+                }).setView([lat, lng], 15);
 
-            const map = L.map('vendorMap', {
-                zoomControl: true,
-                scrollWheelZoom: true
-            }).setView([mapLocation.latitude, mapLocation.longitude], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-
-            // Create custom icon with sage color
-            const vendorIcon = L.divIcon({
-                className: 'vendor-map-marker',
-                html: `
+                // Buat custom icon berdasarkan tipe vendor
+                const vendorIcon = L.divIcon({
+                    className: 'vendor-map-marker',
+                    html: `
                     <div style="
-                        background-color: #92B6B1;
+                        background-color: {{ $vendor->type === 'formal' ? '#007bff' : '#28a745' }}; 
                         width: 40px; 
                         height: 40px; 
                         border-radius: 50% 50% 50% 0; 
@@ -633,22 +585,22 @@
                         ">{{ $vendor->type === 'formal' ? '🏪' : '🛒' }}</div>
                     </div>
                 `,
-                iconSize: [40, 40],
-                iconAnchor: [20, 40]
-            });
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 40]
+                });
 
-            // Add marker to map
-            const marker = L.marker([mapLocation.latitude, mapLocation.longitude], {
-                icon: vendorIcon
-            }).addTo(map);
+                // Tambahkan marker ke map
+                const marker = L.marker([lat, lng], {
+                    icon: vendorIcon
+                }).addTo(map);
 
-            // Popup content with navigation link
-            let popupContent = `
+                // Popup content dengan link navigasi
+                let popupContent = `
                 <div style="min-width: 220px; text-align: center;">
-                    <h6 class="fw-bold mb-1">${mapLocation.location_name}</h6>
+                    <h6 class="fw-bold mb-1">${locationName}</h6>
                     <p class="small text-muted mb-2">{{ $vendor->description ? Str::limit($vendor->description, 80) : 'Tidak ada deskripsi' }}</p>
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="badge bg-sage">
+                        <span class="badge bg-{{ $vendor->type === 'formal' ? 'primary' : 'success' }}">
                             {{ $vendor->type === 'formal' ? 'Toko Tetap' : 'Pedagang Keliling' }}
                         </span>
                         @if ($vendor->type === 'informal' && $currentLocation && $currentLocation['is_active'])
@@ -657,26 +609,56 @@
                             </small>
                         @endif
                     </div>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${mapLocation.latitude},${mapLocation.longitude}" 
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
                        target="_blank" 
-                       class="btn btn-sage btn-sm w-100">
+                       class="btn btn-primary btn-sm w-100">
                         <i class="bx bx-map me-1"></i>Buka di Google Maps
                     </a>
                 </div>
             `;
 
-            marker.bindPopup(popupContent);
+                marker.bindPopup(popupContent).openPopup();
 
-            // Ensure map is rendered correctly
-            setTimeout(() => {
-                map.invalidateSize();
-            }, 100);
+                // Click event untuk marker - redirect ke Google Maps
+                marker.on('click', function() {
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
+                        '_blank');
+                });
 
-            // Store map instance for resize
-            window.vendorMap = map;
-        }
+                // Pastikan map di-render dengan benar
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 100);
+            } else {
+                // Tampilkan pesan jika map tidak bisa ditampilkan
+                document.getElementById('vendorMap').innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="bx bx-map display-4"></i>
+                    <p class="mt-3 mb-0">Lokasi tidak tersedia</p>
+                    <small>Pedagang belum mengatur lokasi atau sedang tidak berjualan</small>
+                </div>
+            `;
+            }
 
-        function initFavoriteButtons() {
+            // Handle tab changes untuk resize map
+            const tabTriggers = document.querySelectorAll('button[data-bs-toggle="pill"]');
+            tabTriggers.forEach(trigger => {
+                trigger.addEventListener('shown.bs.tab', function(e) {
+                    if (e.target.id === 'location-tab' && map) {
+                        setTimeout(() => {
+                            map.invalidateSize();
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+
+
+
+
+        // Handle favorite button click
+        document.addEventListener('DOMContentLoaded', function() {
             const favoriteButtons = document.querySelectorAll('.favorite-btn');
 
             favoriteButtons.forEach(button => {
@@ -684,10 +666,10 @@
                     const vendorId = this.dataset.vendorId;
                     const isFavorited = this.dataset.isFavorited === 'true';
 
-                    if (!isFavorited) {
-                        favoriteVendor(vendorId, this);
-                    } else {
+                    if (isFavorited) {
                         unfavoriteVendor(vendorId, this);
+                    } else {
+                        favoriteVendor(vendorId, this);
                     }
                 });
             });
@@ -703,9 +685,12 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.message) {
-                            button.innerHTML = '<i class="bx bxs-heart text-white fs-6"></i>';
+                            // Update button state
+                            button.innerHTML = '<i class="bx bxs-heart"></i>';
                             button.dataset.isFavorited = 'true';
-                            showToast(data.message, 'success');
+                            button.classList.remove('btn-outline-danger');
+                            button.classList.add('btn-danger');
+                            showToast(data.message);
                         }
                     })
                     .catch(error => {
@@ -726,81 +711,60 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        button.innerHTML = '<i class="bx bx-heart text-white fs-6"></i>';
+                        // Update button state
+                        button.innerHTML = '<i class="bx bx-heart"></i>';
                         button.dataset.isFavorited = 'false';
-                        showToast(data.message, 'success');
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-outline-danger');
+                        showToast(data.message);
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         showToast('Terjadi kesalahan', 'error');
                     });
             }
-        }
 
-        function initPredictionForm() {
-            const predictForm = document.getElementById('predictForm');
-            if (!predictForm) return;
-
-            predictForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                const form = e.target;
-                const data = {
-                    start_time: form.start_time.value,
-                    end_time: form.end_time.value
-                };
-
-                try {
-                    const response = await fetch(`/api/vendor/{{ $vendor->id }}/predict`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    const result = await response.json();
-                    document.getElementById('predictionResult').style.display = 'block';
-                    document.getElementById('aiOutput').textContent = result.ai_result || 'Tidak ada hasil prediksi';
-                } catch (error) {
-                    console.error('Error:', error);
-                    document.getElementById('predictionResult').style.display = 'block';
-                    document.getElementById('aiOutput').textContent = 'Terjadi kesalahan saat memprediksi';
-                }
-            });
-        }
-
-        function initTabHandlers() {
-            const tabTriggers = document.querySelectorAll('button[data-bs-toggle="pill"]');
-            tabTriggers.forEach(trigger => {
-                trigger.addEventListener('shown.bs.tab', function(e) {
-                    if (e.target.id === 'location-tab' && window.vendorMap) {
-                        setTimeout(() => {
-                            window.vendorMap.invalidateSize();
-                        }, 300);
-                    }
-                });
-            });
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `position-fixed bottom-0 end-0 p-3`;
-            toast.innerHTML = `
-                <div class="toast show align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            <i class="bx ${type === 'success' ? 'bx-check-circle' : 'bx-error'} me-2"></i>
-                            ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            function showToast(message, type = 'success') {
+                // Simple toast notification
+                const toast = document.createElement('div');
+                toast.className = `position-fixed bottom-0 end-0 p-3`;
+                toast.innerHTML = `
+            <div class="toast show align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
                     </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
-            `;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
+            </div>
+        `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        });
+
+
+        document.getElementById('predictForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const data = {
+                start_time: form.start_time.value,
+                end_time: form.end_time.value
+            };
+
+            const response = await fetch(`/api/vendor/{{ $vendor->id }}/predict`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            document.getElementById('predictionResult').style.display = 'block';
+            document.getElementById('aiOutput').textContent = result.ai_result;
+        });
     </script>
 @endpush

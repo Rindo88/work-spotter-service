@@ -12,4 +12,4 @@ Route::prefix('vendor/iot')->group(function () {
 });
 
 
-Route::post('/vendor/{vendor}/predict', [VendorPredictionController::class, 'predict']);
+Route::post('/vendor/{vendor}/predict', [VendorPredictionController::class, 'predict'])->name('vendor.predict');
