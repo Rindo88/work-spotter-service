@@ -14,23 +14,6 @@ use Illuminate\Support\Facades\Storage;
 
 class VendorController extends Controller
 {
-    // private function createDefaultSchedules(Vendor $vendor)
-    // {
-    //     $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-    //     foreach ($days as $day) {
-    //         $isWeekend = in_array($day, ['saturday', 'sunday']);
-
-    //         VendorSchedule::create([
-    //             'vendor_id' => $vendor->id,
-    //             'day' => $day,
-    //             'open_time' => $isWeekend ? '09:00:00' : '08:00:00',
-    //             'close_time' => $isWeekend ? '17:00:00' : '20:00:00',
-    //             'is_closed' => $day === 'sunday' && $vendor->is_informal,
-    //             'notes' => $day === 'sunday' ? 'Hari Minggu tutup' : null
-    //         ]);
-    //     }
-    // }
 
     public function show(Vendor $vendor)
     {
@@ -69,6 +52,11 @@ class VendorController extends Controller
 
     public function storeReview(Request $request, Vendor $vendor)
     {
+        // Cek apakah user sudah login
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login untuk memberikan review.');
+        }
+
         $request->validate([
             'rating' => 'required|integer|between:1,5',
             'comment' => 'required|string|max:500',
@@ -76,7 +64,7 @@ class VendorController extends Controller
 
         // Create review
         $vendor->reviews()->create([
-            'user_id' => Auth::user()->id,
+            'user_id' => Auth::id(),
             'rating' => $request->rating,
             'comment' => $request->comment,
         ]);

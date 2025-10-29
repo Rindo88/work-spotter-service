@@ -32,14 +32,21 @@
                 </span>
             </div>
 
-            {{-- {-- Favorite Button - Posisi di kanan atas --}}
-            <button class="btn btn-sm favorite-btn position-absolute"
-                style="top: 15px; right: 15px; width: 32px; height: 32px; padding: 0; border-radius: 50%;"
-                data-vendor-id="{{ $vendor->id }}"
-                data-is-favorited="{{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'true' : 'false' }}">
-                <i
-                    class="bx {{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'bxs-heart text-danger' : 'bx-heart text-muted' }} fs-6"></i>
-            </button>
+            {{-- Favorite Button - Posisi di kanan atas --}}
+            @auth
+                <button class="btn btn-sm favorite-btn position-absolute"
+                    style="top: 15px; right: 15px; width: 32px; height: 32px; padding: 0; border-radius: 50%;"
+                    data-vendor-id="{{ $vendor->id }}"
+                    data-is-favorited="{{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'true' : 'false' }}">
+                    <i
+                        class="bx {{ auth()->user()->hasFavoritedVendor($vendor->id) ? 'bxs-heart text-danger' : 'bx-heart text-muted' }} fs-6"></i>
+                </button>
+            @else
+                <a href="{{ route('login') }}" class="btn btn-sm position-absolute"
+                    style="top: 15px; right: 15px; width: 32px; height: 32px; padding: 0; border-radius: 50%; background: transparent; border: none;">
+                    <i class="bx bx-heart text-muted fs-6"></i>
+                </a>
+            @endauth
 
             <!-- Status Aktif -->
             @if ($vendor->type === 'informal' && $currentLocation && $currentLocation['is_active'])
@@ -57,15 +64,10 @@
 
             {{-- Prediksi Kehadiran --}}
             <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
-                    <h5 class="fw-semibold">{{ $vendor->business_name }}</h5>
-                    <p class="text-muted">{{ $vendor->category->name }}</p>
-
-                    <div class="mt-3">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
-                            <i class="bi bi-robot me-1"></i> Prediksi Kehadiran (AI)
-                        </button>
-                    </div>
+                <div class="mt-3">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#predictModal">
+                        <i class="bi bi-robot me-1"></i> Prediksi Kehadiran (AI)
+                    </button>
                 </div>
             </div>
 
@@ -77,9 +79,16 @@
             </div>
 
             <div class="d-flex gap-2">
-                <a href="{{ route('chat.room', $vendor->id) }}" class="btn btn-success flex-fill rounded-pill">
-                    <i class="bx bx-chat me-1"></i> Chat
-                </a>
+                @auth
+                    <a href="{{ route('chat.room', $vendor->id) }}" class="btn btn-success flex-fill rounded-pill">
+                        <i class="bx bx-chat me-1"></i> Chat
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-success flex-fill rounded-pill">
+                        <i class="bx bx-chat me-1"></i> Chat (Login)
+                    </a>
+                @endauth
+
                 @if ($currentLocation && $currentLocation['is_active'])
                     <a href="https://www.google.com/maps/dir/?api=1&destination={{ $currentLocation['latitude'] }},{{ $currentLocation['longitude'] }}"
                         target="_blank" class="btn btn-primary rounded-pill">
@@ -89,7 +98,7 @@
             </div>
         </div>
 
-    <!-- Tabs -->
+        <!-- Tabs -->
         <ul class="nav nav-pills nav-justified mb-3" id="vendorTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="info-tab" data-bs-toggle="pill" data-bs-target="#info" type="button"
@@ -428,36 +437,66 @@
 
     <!-- Modal -->
     <div class="modal fade" id="predictModal" tabindex="-1" aria-labelledby="predictModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="predictModalLabel">Prediksi Kehadiran Pedagang</h5>
+                    <h5 class="modal-title" id="predictModalLabel">
+                        <i class="bi bi-robot me-1"></i>Prediksi Kehadiran Pedagang
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="predictForm">
-                        <div class="mb-3">
-                            <label class="form-label">Jam Mulai (Opsional)</label>
-                            <input type="time" class="form-control" name="start_time">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Jam Mulai (Opsional)</label>
+                                <input type="time" class="form-control" name="start_time"
+                                    placeholder="Contoh: 08:00">
+                                <div class="form-text">Kosongkan untuk menggunakan waktu sekarang</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Jam Selesai (Opsional)</label>
+                                <input type="time" class="form-control" name="end_time" placeholder="Contoh: 17:00">
+                                <div class="form-text">Kosongkan untuk prediksi single time</div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Jam Selesai (Opsional)</label>
-                            <input type="time" class="form-control" name="end_time">
+
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="bi bi-info-circle me-1"></i>
+                                Prediksi menggunakan AI berdasarkan riwayat check-in pedagang.
+                                Minimal 20 data check-in diperlukan untuk analisis yang akurat.
+                            </small>
                         </div>
-                        <button type="submit" class="btn btn-success w-100">
-                            <i class="bi bi-search me-1"></i> Prediksi Sekarang
+
+                        <button type="submit" class="btn btn-success w-100 py-2">
+                            <i class="bi bi-robot me-1"></i> Prediksi Sekarang
                         </button>
                     </form>
 
-                    <div id="predictionResult" class="mt-4" style="display:none;">
-                        <h6 class="fw-semibold">Hasil Prediksi:</h6>
-                        <pre class="bg-light p-3 rounded" id="aiOutput"></pre>
+                    <!-- Loading Indicator -->
+                    <div id="predictionLoading" class="text-center mt-4" style="display:none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Menganalisis data dan memprediksi...</p>
                     </div>
+
+                    <!-- Result Area -->
+                    <div id="predictionResult" class="mt-4" style="display:none;">
+                        <h6 class="fw-semibold border-bottom pb-2 mb-3">
+                            <i class="bi bi-graph-up me-1"></i>Hasil Prediksi AI
+                        </h6>
+                        <div id="aiOutput" class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
     </div>
-
 
 @endsection
 
@@ -526,6 +565,16 @@
 @push('scripts')
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Tambahkan fungsi untuk menampilkan/menyembunyikan loading
+        function showLoading() {
+            document.getElementById('predictionLoading').style.display = 'block';
+            document.getElementById('predictionResult').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('predictionLoading').style.display = 'none';
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             // Tentukan koordinat untuk map
             let lat, lng, locationName;
@@ -663,6 +712,12 @@
 
             favoriteButtons.forEach(button => {
                 button.addEventListener('click', function() {
+                    // Cek apakah user sudah login
+                    @if (!auth()->check())
+                        window.location.href = '{{ route('login') }}';
+                        return;
+                    @endif
+
                     const vendorId = this.dataset.vendorId;
                     const isFavorited = this.dataset.isFavorited === 'true';
 
@@ -682,14 +737,18 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (response.status === 401) {
+                            window.location.href = '{{ route('login') }}';
+                            return;
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        if (data.message) {
+                        if (data && data.message) {
                             // Update button state
-                            button.innerHTML = '<i class="bx bxs-heart"></i>';
+                            button.innerHTML = '<i class="bx bxs-heart text-danger fs-6"></i>';
                             button.dataset.isFavorited = 'true';
-                            button.classList.remove('btn-outline-danger');
-                            button.classList.add('btn-danger');
                             showToast(data.message);
                         }
                     })
@@ -709,14 +768,20 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (response.status === 401) {
+                            window.location.href = '{{ route('login') }}';
+                            return;
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        // Update button state
-                        button.innerHTML = '<i class="bx bx-heart"></i>';
-                        button.dataset.isFavorited = 'false';
-                        button.classList.remove('btn-danger');
-                        button.classList.add('btn-outline-danger');
-                        showToast(data.message);
+                        if (data && data.message) {
+                            // Update button state
+                            button.innerHTML = '<i class="bx bx-heart text-muted fs-6"></i>';
+                            button.dataset.isFavorited = 'false';
+                            showToast(data.message);
+                        }
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -743,28 +808,88 @@
             }
         });
 
-
         document.getElementById('predictForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+
+            // Show loading state
+            submitBtn.innerHTML = '<i class="bi bi-robot me-1"></i> Memproses...';
+            submitBtn.disabled = true;
+
             const data = {
                 start_time: form.start_time.value,
                 end_time: form.end_time.value
             };
 
-            const response = await fetch(`/api/vendor/{{ $vendor->id }}/predict`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+            try {
+                const response = await fetch(`/vendor/{{ $vendor->id }}/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-            const result = await response.json();
-            document.getElementById('predictionResult').style.display = 'block';
-            document.getElementById('aiOutput').textContent = result.ai_result;
+                const result = await response.json();
+
+                const resultDiv = document.getElementById('predictionResult');
+                const outputElement = document.getElementById('aiOutput');
+
+                resultDiv.style.display = 'block';
+
+                if (result.error) {
+                    // Tampilkan error
+                    outputElement.innerHTML = `<div class="alert alert-danger">
+                <strong>Error:</strong> ${result.message}
+            </div>`;
+                } else {
+                    // Tampilkan hasil prediksi
+                    outputElement.innerHTML = `<div class="alert alert-success">
+                <strong>Hasil Prediksi untuk ${result.vendor}:</strong><br><br>
+                ${formatAiResult(result.ai_result)}
+            </div>`;
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                const resultDiv = document.getElementById('predictionResult');
+                const outputElement = document.getElementById('aiOutput');
+
+                resultDiv.style.display = 'block';
+                outputElement.innerHTML = `<div class="alert alert-danger">
+            <strong>Error:</strong> Terjadi kesalahan saat memproses prediksi. Silakan coba lagi.
+        </div>`;
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Fungsi untuk memformat hasil AI agar lebih rapi
+        function formatAiResult(aiResult) {
+            if (!aiResult) return 'Tidak ada hasil prediksi.';
+
+            // Format teks AI menjadi lebih readable
+            let formatted = aiResult
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+                .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic text
+                .replace(/- (.*?)(?=\n|$)/g, '• $1<br>') // Bullet points
+                .replace(/\n/g, '<br>'); // Line breaks
+
+            return formatted;
+        }
+
+        // Reset form ketika modal ditutup
+        document.getElementById('predictModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('predictForm').reset();
+            document.getElementById('predictionResult').style.display = 'none';
+            document.getElementById('aiOutput').innerHTML = '';
         });
     </script>
 @endpush

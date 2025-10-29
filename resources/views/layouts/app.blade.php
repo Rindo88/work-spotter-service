@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/profile.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 
@@ -54,17 +53,17 @@
                 <i class="bx bx-search fs-5"></i>
                 <small>Cari</small>
             </a>
-            <a href="@if (auth()->user()->isVendor()) {{ route('checkin') }} @else {{ route('user.map') }} @endif"
+            <a href="@auth @if (auth()->user()->isVendor()) {{ route('checkin') }} @else {{ route('user.map') }} @endif @else {{ route('user.map') }} @endauth"
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('map') ? 'active' : '' }}">
                 <i class="bx bx-map-pin fs-5"></i>
                 <small>Peta</small>
             </a>
-            <a href="{{ route('chat.index') }}"
+            <a href="@auth {{ route('chat.index') }} @else {{ route('login') }} @endauth"
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('chat.*') ? 'active' : '' }}">
                 <i class="bx bx-chat fs-5"></i>
                 <small>Chat</small>
             </a>
-            <a href="{{ route('profile') }}" x-navigate
+            <a href="@auth {{ route('profile') }} @else {{ route('login') }} @endauth" x-navigate
                 class="nav-item text-decoration-none d-flex flex-column align-items-center {{ request()->routeIs('profile') ? 'active' : '' }}">
                 <i class="bx bx-user fs-5"></i>
                 <small>Profil</small>

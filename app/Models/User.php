@@ -23,9 +23,7 @@ class User extends Authenticatable
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
-    use HasProfilePhoto;
     use Notifiable;
-    use TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -86,6 +84,11 @@ class User extends Authenticatable
     public function isUser(): bool
     {
         return $this->role === 'user';
+    }
+
+    public function isVendor(): bool
+    {
+        return $this->role === 'vendor';
     }
 
     /**

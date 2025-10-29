@@ -139,7 +139,7 @@
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
                         <a href="{{ route('vendor.show', $vendor) }}" class="text-decoration-none text-dark">
                             <div class="vendor-grid-card h-100">
-                                <img src="{{ $vendor->image_url ?? 'https://placehold.co/300x200' }}"
+                                <img src="{{  asset('storage/' . $vendor->profile_picture) ?? 'https://placehold.co/300x200' }}"
                                     class="w-100 rounded-3 mb-2" style="height: 160px; object-fit: cover;">
                                 <h6 class="fw-bold mb-1 text-truncate">{{ $vendor->business_name }}</h6>
                                 <p class="text-muted small mb-1 text-truncate">{{ $vendor->category->name ?? '-' }}</p>

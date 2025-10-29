@@ -18,10 +18,14 @@ class NotificationsUser extends Component
 
     public function loadNotifications()
     {
+        // CEK APAKAH USER TERAUTENTIKASI SEBELUM MENGAKSES DATA
+        if (!Auth::check()) {
+            $this->notifications = [];
+            $this->unreadCount = 0;
+            return;
+        }
+
         $user = Auth::user();
-
-        if (!$user) return;
-
         $this->notifications = $user->notifications()
             ->latest()
             ->take(5)
@@ -32,6 +36,9 @@ class NotificationsUser extends Component
 
     public function markAsRead($id)
     {
+        // CEK APAKAH USER TERAUTENTIKASI
+        if (!Auth::check()) return;
+
         $notif = Auth::user()->notifications()->find($id);
         if ($notif && !$notif->read_at) {
             $notif->markAsRead();
@@ -39,10 +46,15 @@ class NotificationsUser extends Component
         $this->loadNotifications();
     }
 
-
     // verifikasi email
     public function sendVerificationEmail()
     {
+        // CEK APAKAH USER TERAUTENTIKASI
+        if (!Auth::check()) {
+            $this->dispatch('notify', 'Silakan login terlebih dahulu.');
+            return;
+        }
+
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
@@ -58,7 +70,6 @@ class NotificationsUser extends Component
             $this->dispatch('notify', 'Gagal mengirim email verifikasi: ' . $e->getMessage());
         }
     }
-
 
     public function render()
     {

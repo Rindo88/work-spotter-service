@@ -20,6 +20,7 @@
 
         <a href="{{ route('login') }}" class="welcome-btn welcome-btn-login">Login</a>
         <a href="{{ route('register') }}" class="welcome-btn welcome-btn-register">Daftar</a>
+        <a href="{{ route('home') }}" class="welcome text-white">Lanjut Sebagai Guest</a>
     </div>
 </body>
 </html>
