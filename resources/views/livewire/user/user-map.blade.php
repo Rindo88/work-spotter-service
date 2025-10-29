@@ -32,6 +32,7 @@
                         <option value="3">Radius 3 km</option>
                         <option value="5" selected>Radius 5 km</option>
                         <option value="10">Radius 10 km</option>
+                        <option value="10000000000000000000">Semua</option>
                     </select>
                 </div>
             </div>
@@ -188,7 +189,7 @@
                                             <!-- Mobile: Business name and distance inline with image -->
                                             <div class="d-flex justify-content-between align-items-center w-100 d-sm-none">
                                                 <h6 class="fw-bold mb-0 text-truncate me-2">
-                                                    <a href="{{ route('vendor.show', ['vendor' => $vendor->id]) }}" 
+                                                    <a href="{{ route('vendor.show', ['vendor' => $vendor->id]) }}"
                                                        class="text-decoration-none text-dark"
                                                        onclick="event.stopPropagation()">
                                                         {{ $vendor->business_name }}
@@ -205,7 +206,7 @@
                                             <!-- Desktop: Business name and distance -->
                                             <div class="d-none d-sm-flex justify-content-between align-items-start mb-1">
                                                 <h6 class="fw-bold mb-0">
-                                                    <a href="{{ route('vendor.show', ['vendor' => $vendor->id]) }}" 
+                                                    <a href="{{ route('vendor.show', ['vendor' => $vendor->id]) }}"
                                                        class="text-decoration-none text-dark"
                                                        onclick="event.stopPropagation()">
                                                         {{ $vendor->business_name }}
